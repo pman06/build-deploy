@@ -56,7 +56,8 @@ stages:
       displayName: 'cache node_modules'
 
     - script: |
-        ls /src
-        npm test
+        ls src
+        npm run test:ci
       workingDirectory: src
-    displayName: 'npm run test:ci'
+    displayName: 'npm run test'
+

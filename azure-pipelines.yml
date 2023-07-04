@@ -6,6 +6,9 @@
 trigger:
 - master
 
+variables:
+  nodeModules: src/node_modules
+
 pool:
   vmImage: ubuntu-latest
 
@@ -22,18 +25,20 @@ stages:
       displayName: 'Install Node.js'
 
     - script: |
-        ls -R ../
         cd src
         npm install
-        npm build
-        ls -R ../
+        npm run build
       displayName: 'npm install and build'
+    - task: Cache@2
+      inputs:
+        key: '''"npm" | "$(Agent.OS)" | src/package-lock.json'''
+        path: '$(nodeModules)'
+        cacheHitVar: 'cashehit'
 
 - stage: Test
   jobs:
   - job: 'npm_test'
     steps:
-    - checkout: none
     - script: |
         ls -a && cd src
         npm test

@@ -24,7 +24,7 @@ stages:
     - script: |
         cd src
         npm install
-        npm run build
+        npm build
       displayName: 'npm install and build'
 
 - stage: Test

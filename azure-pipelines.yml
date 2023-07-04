@@ -56,4 +56,4 @@ stages:
         ls /src
         npm test
       workingDirectory: src
-    displayName: 'npm run test'
+    displayName: 'npm run test:ci'

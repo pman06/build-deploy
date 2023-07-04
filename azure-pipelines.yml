@@ -37,9 +37,9 @@ stages:
 
     - script: |
         cd src
-        npm install
-        ls
+        npm ci
         npm run build
+      workingDirectory: src
       displayName: 'npm install and build'
       condition: ne(variables.cachehit, 'true')
 
@@ -56,8 +56,15 @@ stages:
       displayName: 'cache node_modules'
 
     - script: |
-        ls src
         npm run test:ci
       workingDirectory: src
     displayName: 'npm run test'
+    
+    - task: PublishTestResults@2
+      displayName: 'supply npm test results to pipelines'
+      condition: succeededOrFailed()
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: 'src/junit.xml'
+
 

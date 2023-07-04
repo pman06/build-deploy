@@ -33,7 +33,7 @@ stages:
       displayName: 'cache node_modules'
 
     - script: |
-        pushd $(uiSource)
+        cd src
         npm ci
         ls
         npm run build

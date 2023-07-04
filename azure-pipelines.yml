@@ -48,6 +48,7 @@ stages:
     - checkout: self
       clean: false
     - script: |
+        ls
         npm test
       workingDirectory: src
     displayName: 'npm run test'

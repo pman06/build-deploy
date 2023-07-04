@@ -22,9 +22,11 @@ stages:
       displayName: 'Install Node.js'
 
     - script: |
+        ls -R ../
         cd src
         npm install
         npm build
+        ls -R ../
       displayName: 'npm install and build'
 
 - stage: Test

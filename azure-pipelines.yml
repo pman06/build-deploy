@@ -14,7 +14,7 @@ stages:
   pool:
     vmImage: ubuntu-latest
   jobs:
-  - job:
+  - job: 'npm_install'
     steps:
     - task: NodeTool@0
       inputs:
@@ -29,7 +29,7 @@ stages:
 
 - stage: Test
   jobs:
-  - job: 'npm-test'
+  - job: 'npm_test'
     steps:
     - script: npm test
     displayName: 'npm run test'

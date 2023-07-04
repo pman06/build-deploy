@@ -33,7 +33,8 @@ stages:
   jobs:
   - job: 'npm_test'
     steps:
+    - checkout: none
     - script: |
-        ls -a
+        ls -a && cd src
         npm test
     displayName: 'npm run test'

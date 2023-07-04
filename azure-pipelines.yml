@@ -7,7 +7,7 @@ trigger:
 - master
 
 variables:
-  nodeModules: $(System.DefaultWorkingDirectory)/**/node_modules
+  nodeModules: $(System.DefaultWorkingDirectory)/src/node_modules
 
 pool:
   vmImage: ubuntu-latest
@@ -34,10 +34,11 @@ stages:
 
     - script: |
         cd src
-        npm ci
+        npm install
         ls
         npm run build
       displayName: 'npm install and build'
+      condition: ne(variables.cachehit, 'true')
 
 
 - stage: Test

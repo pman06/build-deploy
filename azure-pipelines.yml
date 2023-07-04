@@ -34,7 +34,8 @@ stages:
 
     - script: |
         pushd $(uiSource)
-        npm install
+        npm ci
+        ls
         npm run build
       displayName: 'npm install and build'
 

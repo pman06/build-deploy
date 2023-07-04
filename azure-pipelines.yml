@@ -58,7 +58,7 @@ stages:
     - script: |
         npm run test:ci
       workingDirectory: src
-    displayName: 'npm run test'
+      displayName: 'npm run test'
     
     - task: PublishTestResults@2
       displayName: 'supply npm test results to pipelines'

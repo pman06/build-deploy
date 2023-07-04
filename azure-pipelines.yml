@@ -33,5 +33,7 @@ stages:
   jobs:
   - job: 'npm_test'
     steps:
-    - script: npm test
+    - script: |
+        ls -a
+        npm test
     displayName: 'npm run test'

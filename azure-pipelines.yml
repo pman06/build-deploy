@@ -38,15 +38,35 @@ stages:
 
     - script: |
         npm ci
-        npm run build
       workingDirectory: src
-      displayName: 'npm install and build'
+      displayName: 'npm install'
       condition: ne(variables.cachehit, 'true')
+    
+    - task: SonarCloudPrepare@1
+      inputs:
+        SonarCloud: 'SONAR_TOKEN_TO_ADO'
+        organization: 'cooclass'
+        scannerMode: 'CLI'
+        configMode: 'manual'
+        cliProjectKey: 'build-deploy'
+        cliProjectName: 'build-deploy'
+        cliSources: './src'
+    
+    - script: npm run build
+      displayName: "npm build"
+    
+    - task: SonarCloudAnalyze@1
+      inputs:
+        jdkversion: 'JAVA_HOME_11_X64'
+    
+    - task: SonarCloudPublish@1
+      inputs:
+        pollingTimeoutSec: '300'
 
 
 - stage: Test
   jobs:
-  - job: 'NPMTest'
+  - job: 'Tests'
     steps:
     - task: Cache@2
       inputs:
@@ -69,7 +89,7 @@ stages:
         testResultsFormat: 'JUnit'
         testResultsFiles: 'src/junit.xml'
 
-  - job: SecurityScan
+  - job: SecurityScans
     steps:
     - task: Cache@2
       inputs:
@@ -85,6 +105,7 @@ stages:
         ls '$(fe-test)'
         echo ls $(Build.SourcesDirectory) result
         ls '$(Build.SourcesDirectory)'
+  
     - task: SnykSecurityScan@1 
       inputs:
         serviceConnectionEndpoint: 'Azure Pipeline'
@@ -95,4 +116,6 @@ stages:
         projectName: 'Azure_build_deploy_pipeline'
         organization: 'freemeonline'
         testDirectory: '$(fe-test)'
+      
+    
 

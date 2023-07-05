@@ -11,42 +11,42 @@ trigger:
 
 variables:
   nodeModules: $(System.DefaultWorkingDirectory)/src/node_modules
+  fe-test: "$(Build.SourcesDirectory)/src"
 
 pool:
   vmImage: ubuntu-latest
   uiSource: /src
 
 stages:
-- stage: Build
-  pool:
-    vmImage: ubuntu-latest
-  jobs:
-  - job: 'npm_install'
-    steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '16.x'
-      displayName: 'Install Node.js'
+# - stage: Build
+#   pool:
+#     vmImage: ubuntu-latest
+#   jobs:
+#   - job: 'npm_install'
+#     steps:
+#     - task: NodeTool@0
+#       inputs:
+#         versionSpec: '16.x'
+#       displayName: 'Install Node.js'
 
-    - task: Cache@2
-      inputs:
-        key: '"npm" | "$(Agent.OS)" | src/package-lock.json'
-        path: '$(nodeModules)'
-        cacheHitVar: 'cachehit'
-      displayName: 'cache node_modules'
+#     - task: Cache@2
+#       inputs:
+#         key: '"npm" | "$(Agent.OS)" | src/package-lock.json'
+#         path: '$(nodeModules)'
+#         cacheHitVar: 'cachehit'
+#       displayName: 'cache node_modules'
 
-    - script: |
-        cd src
-        npm ci
-        npm run build
-      workingDirectory: src
-      displayName: 'npm install and build'
-      condition: ne(variables.cachehit, 'true')
+#     - script: |
+#         npm ci
+#         npm run build
+#       workingDirectory: src
+#       displayName: 'npm install and build'
+#       condition: ne(variables.cachehit, 'true')
 
 
 - stage: Test
   jobs:
-  - job: 'npm_test'
+  - job: 'NPMTest'
     steps:
     - task: Cache@2
       inputs:
@@ -55,11 +55,13 @@ stages:
         cacheHitVar: 'cachehit'
       displayName: 'cache node_modules'
 
+    # Execute npm run test
     - script: |
         npm run test:ci
       workingDirectory: src
       displayName: 'npm run test'
     
+    #Provide test results as outputs
     - task: PublishTestResults@2
       displayName: 'supply npm test results to pipelines'
       condition: succeededOrFailed()
@@ -67,4 +69,30 @@ stages:
         testResultsFormat: 'JUnit'
         testResultsFiles: 'src/junit.xml'
 
+  - job: SecurityScan
+    steps:
+    - task: Cache@2
+      inputs:
+        key: '"npm" | "$(Agent.OS)" | src/package-lock.json'
+        path: '$(nodeModules)'
+        cacheHitVar: 'cachehit'
+      displayName: 'cache node_modules'
+    
+    - script: |
+        echo ls result
+        ls
+        echo ls '$(fe-test)'
+        ls '$(fe-test)'
+        echo ls $(Build.SourcesDirectory) result
+        ls '$(Build.SourcesDirectory)'
+    - task: SnykSecurityScan@1 
+      inputs:
+        serviceConnectionEndpoint: 'Azure Pipeline'
+        testType: 'app'
+        severityThreshold: 'low'
+        monitorWhen: 'always'
+        failOnIssues: true
+        projectName: 'Azure_build_deploy_pipeline'
+        organization: 'freemeonline'
+        testDirectory: '$(fe-test)'
 

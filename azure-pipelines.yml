@@ -53,6 +53,7 @@ stages:
         cliSources: './src'
     
     - script: npm run build
+      workingDirectory: src
       displayName: "npm build"
     
     - task: SonarCloudAnalyze@1

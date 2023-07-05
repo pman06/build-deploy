@@ -22,8 +22,6 @@ stages:
     vmImage: ubuntu-latest
   jobs:
   - job: 'npm_install'
-    strategy:
-     parallel: 2
     steps:
     - task: NodeTool@0
       inputs:
@@ -70,8 +68,16 @@ stages:
         testResultsFormat: 'JUnit'
         testResultsFiles: 'src/junit.xml'
 
-  # - job: CodeCoverage
-  #   steps:
-  #     - 
-
+  - job: SecurityScan
+    steps:
+    - task: SnykSecurityScan@1
+      inputs:
+        serviceConnectionEndpoint: 'Azure Pipeline'
+        testType: 'app'
+        targetFile: 'src'
+        severityThreshold: 'critical'
+        monitorWhen: 'always'
+        failOnIssues: true
+        projectName: 'Azure build-deploy pipeline'
+        organization: 'coolclass'
 

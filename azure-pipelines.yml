@@ -79,8 +79,11 @@ stages:
       displayName: 'cache node_modules'
     
     - script: |
+        echo ls result
         ls
+        echo ls '$(fe-test)'
         ls '$(fe-test)'
+        echo ls $(Build.SourcesDirectory) result
         ls '$(Build.SourcesDirectory)'
     - task: SnykSecurityScan@1 
       inputs:
@@ -90,6 +93,6 @@ stages:
         monitorWhen: 'always'
         failOnIssues: true
         projectName: 'Azure_build_deploy_pipeline'
-        organization: 'coolclass'
+        organization: 'freemeonline'
         testDirectory: '$(fe-test)'
 

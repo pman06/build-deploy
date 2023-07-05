@@ -81,8 +81,7 @@ stages:
       inputs:
         serviceConnectionEndpoint: 'Azure Pipeline'
         testType: 'app'
-        targetFile: '$(Build.SourcesDirectory)/src'
-        severityThreshold: 'critical'
+        severityThreshold: 'low'
         monitorWhen: 'always'
         failOnIssues: true
         projectName: 'Azure build-deploy pipeline'

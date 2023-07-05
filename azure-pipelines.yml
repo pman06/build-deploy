@@ -70,11 +70,18 @@ stages:
 
   - job: SecurityScan
     steps:
+    - task: Cache@2
+      inputs:
+        key: '"npm" | "$(Agent.OS)" | src/package-lock.json'
+        path: '$(nodeModules)'
+        cacheHitVar: 'cachehit'
+      displayName: 'cache node_modules'
     - task: SnykSecurityScan@1
+    
       inputs:
         serviceConnectionEndpoint: 'Azure Pipeline'
         testType: 'app'
-        targetFile: 'src'
+        targetFile: '$(Build.SourcesDirectory)/src'
         severityThreshold: 'critical'
         monitorWhen: 'always'
         failOnIssues: true

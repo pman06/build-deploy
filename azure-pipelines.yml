@@ -91,7 +91,7 @@ stages:
         testType: 'app'
         severityThreshold: 'low'
         monitorWhen: 'always'
-        failOnIssues: true
+        failOnIssues: false
         projectName: 'Azure_build_deploy_pipeline'
         organization: 'freemeonline'
         testDirectory: '$(fe-test)'

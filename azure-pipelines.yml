@@ -77,8 +77,12 @@ stages:
         path: '$(nodeModules)'
         cacheHitVar: 'cachehit'
       displayName: 'cache node_modules'
-    - task: SnykSecurityScan@1
     
+    - script: |
+        ls
+        ls '$(fe-test)'
+        ls '$(Build.SourcesDirectory)'
+    - task: SnykSecurityScan@1 
       inputs:
         serviceConnectionEndpoint: 'Azure Pipeline'
         testType: 'app'
@@ -87,5 +91,5 @@ stages:
         failOnIssues: true
         projectName: 'Azure_build_deploy_pipeline'
         organization: 'coolclass'
-        testDirectory: $fe-test
+        testDirectory: '$(fe-test)'
 

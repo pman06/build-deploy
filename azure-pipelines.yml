@@ -11,6 +11,7 @@ trigger:
 
 variables:
   nodeModules: $(System.DefaultWorkingDirectory)/src/node_modules
+  fe-test: "$(Build.SourcesDirectory)/src"
 
 pool:
   vmImage: ubuntu-latest
@@ -86,4 +87,5 @@ stages:
         failOnIssues: true
         projectName: 'Azure build-deploy pipeline'
         organization: 'coolclass'
+        testDirectory: $fe-test
 

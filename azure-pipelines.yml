@@ -22,6 +22,8 @@ stages:
     vmImage: ubuntu-latest
   jobs:
   - job: 'npm_install'
+    strategy:
+     parallel: 2
     steps:
     - task: NodeTool@0
       inputs:
@@ -36,7 +38,6 @@ stages:
       displayName: 'cache node_modules'
 
     - script: |
-        cd src
         npm ci
         npm run build
       workingDirectory: src
@@ -46,7 +47,7 @@ stages:
 
 - stage: Test
   jobs:
-  - job: 'npm_test'
+  - job: 'NPMTest'
     steps:
     - task: Cache@2
       inputs:
@@ -55,16 +56,22 @@ stages:
         cacheHitVar: 'cachehit'
       displayName: 'cache node_modules'
 
+    # Execute npm run test
     - script: |
         npm run test:ci
       workingDirectory: src
       displayName: 'npm run test'
     
+    #Provide test results as outputs
     - task: PublishTestResults@2
       displayName: 'supply npm test results to pipelines'
       condition: succeededOrFailed()
       inputs:
         testResultsFormat: 'JUnit'
         testResultsFiles: 'src/junit.xml'
+
+  # - job: CodeCoverage
+  #   steps:
+  #     - 
 
 

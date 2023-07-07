@@ -6,8 +6,10 @@
 trigger:
   batch: true
   branches:
-   exclude:
+   include:
    - master
+   exclude:
+   - dev
 
 
 variables:

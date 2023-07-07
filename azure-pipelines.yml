@@ -6,8 +6,9 @@
 trigger:
   batch: true
   branches:
-   include:
+   exclude:
    - master
+
 
 variables:
   nodeModules: $(System.DefaultWorkingDirectory)/src/node_modules
@@ -67,6 +68,12 @@ stages:
 
 - stage: Test
   jobs:
+  - job: 'Audit'
+    steps:
+    - script: npm audit --audit-level=moderate
+      displayName: "NPM audit (DEV)"
+      continueOnError: true
+    
   - job: 'Tests'
     steps:
     - task: Cache@2
@@ -75,13 +82,11 @@ stages:
         path: '$(nodeModules)'
         cacheHitVar: 'cachehit'
       displayName: 'cache node_modules'
-
     # Execute npm run test
     - script: |
         npm run test:ci
       workingDirectory: src
       displayName: 'npm run test'
-    
     #Provide test results as outputs
     - task: PublishTestResults@2
       displayName: 'supply npm test results to pipelines'

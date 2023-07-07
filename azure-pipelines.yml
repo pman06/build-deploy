@@ -5,7 +5,11 @@
 
 trigger:
   batch: true
-  
+  branches:
+   include:
+   - master
+   exclude:
+   - dev
 
 
 variables:

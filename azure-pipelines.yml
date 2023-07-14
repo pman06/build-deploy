@@ -8,9 +8,6 @@ trigger:
   branches:
    include:
    - master
-   exclude:
-   - dev
-
 
 variables:
   nodeModules: $(System.DefaultWorkingDirectory)/src/node_modules
@@ -45,6 +42,27 @@ stages:
       displayName: 'npm install'
       condition: ne(variables.cachehit, 'true')
     
+    
+    - task: AzureKeyVault@2
+      inputs:
+        azureSubscription: 'Azure subscription 1(3adc070f-9710-4754-8588-55bbc2ae1644)'
+        KeyVaultName: 'configdev'
+        SecretsFilter: '*'
+        RunAsPreJob: false
+    
+    - script: |
+        echo REACT_APP_FLATFILE_LICENSE_KEY: $(REACT-APP-FLATFILE-LICENSE-KEY) >> application.yaml
+        echo REACT_APP_FULLSTORY_ORG_ID: $(REACT-APP-FULLSTORY-ORG-ID) >> application.yaml
+        echo REACT_APP_FULLSTORY_ORG_ID: $(REACT-APP-FULLSTORY-ORG-ID) >> application.yaml
+        cp application.yaml $(System.DefaultWorkingDirectory)/src/
+        ls $(System.DefaultWorkingDirectory)/src/
+        echo and here
+        ls
+
+    - script: |
+        cat application.yaml
+      displayName: "Show attached KV secrets"
+
     - task: SonarCloudPrepare@1
       inputs:
         SonarCloud: 'SONAR_TOKEN_TO_ADO'
@@ -70,12 +88,6 @@ stages:
 
 - stage: Test
   jobs:
-  - job: 'Audit'
-    steps:
-    - script: npm audit --audit-level=moderate
-      displayName: "NPM audit (DEV)"
-      continueOnError: true
-    
   - job: 'Tests'
     steps:
     - task: Cache@2
@@ -84,11 +96,13 @@ stages:
         path: '$(nodeModules)'
         cacheHitVar: 'cachehit'
       displayName: 'cache node_modules'
-    # Execute npm run test
+
+    # Execute npm test with codecoverage
     - script: |
-        npm run test:ci
+        CI=true npm run test -- --coverage --watchAll=false --ci --reporters=default --reporters=jest-junit --coverageReporters=cobertura
       workingDirectory: src
-      displayName: 'npm run test'
+      displayName: 'Run test with codecoverage'
+
     #Provide test results as outputs
     - task: PublishTestResults@2
       displayName: 'supply npm test results to pipelines'
@@ -96,6 +110,15 @@ stages:
       inputs:
         testResultsFormat: 'JUnit'
         testResultsFiles: 'src/junit.xml'
+    
+    #Provide coverage as outputs
+    - task: PublishCodeCoverageResults@1
+      displayName: "Publish code coverage"
+      inputs:
+        codeCoverageTool: Cobertura
+        summaryFileLocation: "$(System.DefaultWorkingDirectory)/src/coverage/cobertura-coverage.xml"
+        reportDirectory: "$(System.DefaultWorkingDirectory)/src/coverage"
+        failIfCoverageEmpty: false
 
   - job: SecurityScans
     steps:
@@ -126,4 +149,3 @@ stages:
         testDirectory: '$(fe-test)'
       
     
-

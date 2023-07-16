@@ -74,6 +74,7 @@ stages:
         cliSources: './src'
         extraProperties: |
           sonar.coverageReportPaths=./src/coverage
+          sonar.exclusions=**/node_modules/**,**/test/**
     
     - script: npm run build
       workingDirectory: src

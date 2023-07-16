@@ -59,9 +59,9 @@ stages:
     #     echo and here
     #     ls
 
-    - script: |
-        cat application.yaml
-      displayName: "Show attached KV secrets"
+    # - script: |
+    #     cat application.yaml
+    #   displayName: "Show attached KV secrets"
 
     - task: SonarCloudPrepare@1
       inputs:

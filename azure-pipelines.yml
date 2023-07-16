@@ -43,21 +43,21 @@ stages:
       condition: ne(variables.cachehit, 'true')
     
     
-    - task: AzureKeyVault@2
-      inputs:
-        azureSubscription: 'Azure subscription 1(3adc070f-9710-4754-8588-55bbc2ae1644)'
-        KeyVaultName: 'configdev'
-        SecretsFilter: '*'
-        RunAsPreJob: false
+    # - task: AzureKeyVault@2
+    #   inputs:
+    #     azureSubscription: 'Azure subscription 1(3adc070f-9710-4754-8588-55bbc2ae1644)'
+    #     KeyVaultName: 'configdev'
+    #     SecretsFilter: '*'
+    #     RunAsPreJob: false
     
-    - script: |
-        echo REACT_APP_FLATFILE_LICENSE_KEY: $(REACT-APP-FLATFILE-LICENSE-KEY) >> application.yaml
-        echo REACT_APP_FULLSTORY_ORG_ID: $(REACT-APP-FULLSTORY-ORG-ID) >> application.yaml
-        echo REACT_APP_FULLSTORY_ORG_ID: $(REACT-APP-FULLSTORY-ORG-ID) >> application.yaml
-        cp application.yaml $(System.DefaultWorkingDirectory)/src/
-        ls $(System.DefaultWorkingDirectory)/src/
-        echo and here
-        ls
+    # - script: |
+    #     echo REACT_APP_FLATFILE_LICENSE_KEY: $(REACT-APP-FLATFILE-LICENSE-KEY) >> application.yaml
+    #     echo REACT_APP_FULLSTORY_ORG_ID: $(REACT-APP-FULLSTORY-ORG-ID) >> application.yaml
+    #     echo REACT_APP_FULLSTORY_ORG_ID: $(REACT-APP-FULLSTORY-ORG-ID) >> application.yaml
+    #     cp application.yaml $(System.DefaultWorkingDirectory)/src/
+    #     ls $(System.DefaultWorkingDirectory)/src/
+    #     echo and here
+    #     ls
 
     - script: |
         cat application.yaml
@@ -72,6 +72,8 @@ stages:
         cliProjectKey: 'build-deploy'
         cliProjectName: 'build-deploy'
         cliSources: './src'
+        extraProperties: |
+          sonar.coverageReportPaths=./src/coverage
     
     - script: npm run build
       workingDirectory: src

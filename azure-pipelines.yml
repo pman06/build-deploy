@@ -98,6 +98,18 @@ stages:
         path: '$(nodeModules)'
         cacheHitVar: 'cachehit'
       displayName: 'cache node_modules'
+    
+    - task: SonarCloudPrepare@1
+      inputs:
+        SonarCloud: 'SONAR_TOKEN_TO_ADO'
+        organization: 'cooclass'
+        scannerMode: 'CLI'
+        configMode: 'manual'
+        cliProjectKey: 'build-deploy'
+        cliProjectName: 'build-deploy'
+        cliSources: './src'
+        extraProperties: |
+          sonar.coverageReportPaths=./src/coverage
 
     # Execute npm test with codecoverage
     - script: |

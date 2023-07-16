@@ -18,7 +18,7 @@ pool:
   uiSource: /src
 
 stages:
-- stage: Build
+- stage: Build and Test
   pool:
     vmImage: ubuntu-latest
   jobs:
@@ -79,38 +79,6 @@ stages:
       workingDirectory: src
       displayName: "npm build"
     
-    - task: SonarCloudAnalyze@1
-      inputs:
-        jdkversion: 'JAVA_HOME_11_X64'
-    
-    - task: SonarCloudPublish@1
-      inputs:
-        pollingTimeoutSec: '300'
-
-
-- stage: Test
-  jobs:
-  - job: 'Tests'
-    steps:
-    - task: Cache@2
-      inputs:
-        key: '"npm" | "$(Agent.OS)" | src/package-lock.json'
-        path: '$(nodeModules)'
-        cacheHitVar: 'cachehit'
-      displayName: 'cache node_modules'
-    
-    - task: SonarCloudPrepare@1
-      inputs:
-        SonarCloud: 'SONAR_TOKEN_TO_ADO'
-        organization: 'cooclass'
-        scannerMode: 'CLI'
-        configMode: 'manual'
-        cliProjectKey: 'build-deploy'
-        cliProjectName: 'build-deploy'
-        cliSources: './src'
-        extraProperties: |
-          sonar.coverageReportPaths=./src/coverage
-
     # Execute npm test with codecoverage
     - script: |
         CI=true npm run test -- --coverage --watchAll=false --ci --reporters=default --reporters=jest-junit --coverageReporters=cobertura
@@ -133,33 +101,27 @@ stages:
         summaryFileLocation: "$(System.DefaultWorkingDirectory)/src/coverage/cobertura-coverage.xml"
         reportDirectory: "$(System.DefaultWorkingDirectory)/src/coverage"
         failIfCoverageEmpty: false
-
-  - job: SecurityScans
-    steps:
-    - task: Cache@2
-      inputs:
-        key: '"npm" | "$(Agent.OS)" | src/package-lock.json'
-        path: '$(nodeModules)'
-        cacheHitVar: 'cachehit'
-      displayName: 'cache node_modules'
     
-    - script: |
-        echo ls result
-        ls
-        echo ls '$(fe-test)'
-        ls '$(fe-test)'
-        echo ls $(Build.SourcesDirectory) result
-        ls '$(Build.SourcesDirectory)'
-  
-    - task: SnykSecurityScan@1 
+    - task: SonarCloudAnalyze@1
       inputs:
-        serviceConnectionEndpoint: 'Azure Pipeline'
-        testType: 'app'
-        severityThreshold: 'low'
-        monitorWhen: 'always'
-        failOnIssues: false
-        projectName: 'Azure_build_deploy_pipeline'
-        organization: 'freemeonline'
-        testDirectory: '$(fe-test)'
+        jdkversion: 'JAVA_HOME_11_X64'
+    
+    - task: SonarCloudPublish@1
+      inputs:
+        pollingTimeoutSec: '300'
+
+
+# - stage: Security_Scan
+#   jobs:
+#   - job: SecurityScans
+#     steps:
+#     - task: Cache@2
+#       inputs:
+#         key: '"npm" | "$(Agent.OS)" | src/package-lock.json'
+#         path: '$(nodeModules)'
+#         cacheHitVar: 'cachehit'
+#       displayName: 'cache node_modules'
+  
+
       
     

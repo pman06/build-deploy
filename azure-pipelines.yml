@@ -73,7 +73,7 @@ stages:
         cliProjectName: 'build-deploy'
         cliSources: './src'
         extraProperties: |
-          sonar.coverageReportPaths=./src/coverage
+          sonar.flex.cobertura.reportPaths=$(System.DefaultWorkingDirectory)/src/coverage/cobertura-coverage.xml
           sonar.exclusions=**/node_modules/**,**/test/**
     
     - script: npm run build
@@ -85,6 +85,10 @@ stages:
         CI=true npm run test -- --coverage --watchAll=false --ci --reporters=default --reporters=jest-junit --coverageReporters=cobertura
       workingDirectory: src
       displayName: 'Run test with codecoverage'
+    
+    - task: SonarCloudAnalyze@1
+      inputs:
+        jdkversion: 'JAVA_HOME_11_X64'
 
     #Provide test results as outputs
     - task: PublishTestResults@2
@@ -102,10 +106,6 @@ stages:
         summaryFileLocation: "$(System.DefaultWorkingDirectory)/src/coverage/cobertura-coverage.xml"
         reportDirectory: "$(System.DefaultWorkingDirectory)/src/coverage"
         failIfCoverageEmpty: false
-    
-    - task: SonarCloudAnalyze@1
-      inputs:
-        jdkversion: 'JAVA_HOME_11_X64'
     
     - task: SonarCloudPublish@1
       inputs:

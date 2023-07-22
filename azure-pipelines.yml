@@ -10,8 +10,11 @@ trigger:
    - master
 
 variables:
-  nodeModules: $(System.DefaultWorkingDirectory)/src/node_modules
-  fe-test: "$(Build.SourcesDirectory)/src"
+- group: RSP-VARS
+- name: nodeModules
+  value: $(System.DefaultWorkingDirectory)/src/node_modules
+- name: fe-test
+  value: "$(Build.SourcesDirectory)/src"
 
 pool:
   vmImage: ubuntu-latest
@@ -22,6 +25,11 @@ stages:
   pool:
     vmImage: ubuntu-latest
   jobs:
+  - job: 'view_envs'
+    steps:
+      - script: env
+        displayName: "Print envs"
+        
   - job: 'npm_install'
     steps:
     - task: NodeTool@0

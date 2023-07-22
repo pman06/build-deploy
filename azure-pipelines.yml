@@ -24,12 +24,7 @@ stages:
 - stage: Build_and_Test
   pool:
     vmImage: ubuntu-latest
-  jobs:
-  - job: 'view_envs'
-    steps:
-      - script: env
-        displayName: "Print envs"
-        
+  jobs:        
   - job: 'npm_install'
     steps:
     - task: NodeTool@0
@@ -97,6 +92,17 @@ stages:
     - task: SonarCloudAnalyze@1
       inputs:
         jdkversion: 'JAVA_HOME_11_X64'
+    
+    - task: SnykSecurityScan@1 
+      inputs:
+        serviceConnectionEndpoint: 'Azure Pipeline'
+        testType: 'app'
+        severityThreshold: 'low'
+        monitorWhen: 'always'
+        failOnIssues: true
+        projectName: 'Azure_build_deploy_pipeline'
+        organization: 'freemeonline'
+        testDirectory: '$(fe-test)'
 
     #Provide test results as outputs
     - task: PublishTestResults@2
@@ -108,6 +114,7 @@ stages:
     
     #Provide coverage as outputs
     - task: PublishCodeCoverageResults@1
+      condition: succeededOrFailed()
       displayName: "Publish code coverage"
       inputs:
         codeCoverageTool: Cobertura
@@ -116,6 +123,7 @@ stages:
         failIfCoverageEmpty: false
     
     - task: SonarCloudPublish@1
+      condition: succeededOrFailed()
       inputs:
         pollingTimeoutSec: '300'
 

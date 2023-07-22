@@ -26,6 +26,7 @@ stages:
     vmImage: ubuntu-latest
   jobs:        
   - job: 'npm_install'
+    displayName: "Build and test"
     steps:
     - task: NodeTool@0
       inputs:
@@ -127,17 +128,6 @@ stages:
       inputs:
         pollingTimeoutSec: '300'
 
-
-# - stage: Security_Scan
-#   jobs:
-#   - job: SecurityScans
-#     steps:
-#     - task: Cache@2
-#       inputs:
-#         key: '"npm" | "$(Agent.OS)" | src/package-lock.json'
-#         path: '$(nodeModules)'
-#         cacheHitVar: 'cachehit'
-#       displayName: 'cache node_modules'
   
 
       

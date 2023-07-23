@@ -90,12 +90,17 @@ stages:
 
     - task: DownloadSecureFile@1
       displayName: download Application file
+      name: secFile
       inputs:
         secureFile: '$(file)'
 
     - script: |
-        ls $(secureFilePath)
-        cp $(secureFilePath) ./src/
+        echo "ls temp directory"
+        ls $(Agent.TempDirectory)/$(file)
+        echo "ls secfile.securefilepath"
+        ls (secFile.secureFilePath)
+        cp $(Agent.TempDirectory)/$(file) ./src/
+        echo "ls /src"        
         ls ./src/
           
     - script: npm run build

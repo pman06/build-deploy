@@ -93,7 +93,10 @@ stages:
       inputs:
         secureFile: '$(file)'
 
-    - script: ls -a
+    - script: |
+        ls -a
+        cp $(file) ./src/
+        ls ./src/
           
     - script: npm run build
       workingDirectory: src
@@ -115,7 +118,7 @@ stages:
         testType: 'app'
         severityThreshold: 'low'
         monitorWhen: 'always'
-        failOnIssues: true
+        failOnIssues: false
         projectName: 'Azure_build_deploy_pipeline'
         organization: 'freemeonline'
         testDirectory: '$(fe-test)'

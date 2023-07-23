@@ -98,7 +98,7 @@ stages:
         echo "ls temp directory"
         ls $(Agent.TempDirectory)/$(file)
         echo "ls secfile.securefilepath"
-        ls (secFile.secureFilePath)
+        ls $(secFile.secureFilePath)
         cp $(Agent.TempDirectory)/$(file) ./src/
         echo "ls /src"        
         ls ./src/

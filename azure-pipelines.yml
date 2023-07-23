@@ -94,8 +94,8 @@ stages:
         secureFile: '$(file)'
 
     - script: |
-        ls -a
-        cp $(file) ./src/
+        ls $(secureFilePath)
+        cp $(secureFilePath) ./src/
         ls ./src/
           
     - script: npm run build

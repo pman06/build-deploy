@@ -15,6 +15,9 @@ variables:
   value: $(System.DefaultWorkingDirectory)/src/node_modules
 - name: fe-test
   value: "$(Build.SourcesDirectory)/src"
+- name: branch
+  value: "$(Build.SourceBranch)"
+
 
 pool:
   vmImage: ubuntu-latest
@@ -79,7 +82,26 @@ stages:
         extraProperties: |
           sonar.flex.cobertura.reportPaths=$(System.DefaultWorkingDirectory)/src/coverage/cobertura-coverage.xml
           sonar.exclusions=**/node_modules/**,**/test/**
-    
+
+    - ${{ if eq('$(branch)', 'refs/heads/main') }}:
+      - task: DownloadSecureFile@1
+        displayName: download Application file
+        inputs:
+          secureFile: 'application.yaml'
+    ${{ if eq('$(branch)', 'refs/heads/dev') }}:
+      - task: DownloadSecureFile@1
+        displayName: download Application file
+        inputs:
+          secureFile: 'application-dev-pp.yaml'
+    ${{ if eq('$(branch)', 'refs/heads/azure-pipelines') }}:
+      - task: DownloadSecureFile@1
+        displayName: download Application file
+        inputs:
+          secureFile: 'application-az-pp.yaml'
+
+    - script: |
+        ls -a
+          
     - script: npm run build
       workingDirectory: src
       displayName: "npm build"

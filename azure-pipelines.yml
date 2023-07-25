@@ -100,6 +100,7 @@ stages:
         echo "ls secfile.securefilepath"
         ls $(secFile.secureFilePath)
         cp $(Agent.TempDirectory)/$(file) ./src/
+        mv ./src/$(file) ./src/application.yaml
         echo "ls /src"        
         ls ./src/
           

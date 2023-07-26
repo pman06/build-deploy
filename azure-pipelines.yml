@@ -154,8 +154,8 @@ stages:
         pollingTimeoutSec: '300'
     - task: CopyFiles@2
       inputs:
-        SourceFolder: '$(System.DefaultWorkingDirectory)/src/build'
-        Contents: '**'
+        SourceFolder: '$(System.DefaultWorkingDirectory)/src/'
+        Contents: 'build/**/*'
         TargetFolder: '$(Build.ArtifactStagingDirectory)/output'
         CleanTargetFolder: true
     - task: ArchiveFiles@2
@@ -195,10 +195,9 @@ stages:
               azureSubscription: 'Azure subscription 1(3adc070f-9710-4754-8588-55bbc2ae1644)'
               appType: 'webAppLinux'
               appName: 'test-mywebapp-react'
-              deployToSlotOrASE: true
-              resourceGroupName: 'test-rc'
-              slotName: 'production'
               package: '$(Pipeline.Workspace)/drop/*.zip'
+              runtimeStack: 'NODE|16-lts'
+              startUpCommand: 'npm install -g serve && serve -s build'
   
   
   

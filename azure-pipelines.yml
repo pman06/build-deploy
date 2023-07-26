@@ -164,6 +164,10 @@ stages:
         ArtifactName: 'drop'
         publishLocation: 'Container'
     
+    - script: |
+        ls $(Build.ArtifactStagingDirectory)/output
+        ls $(Build.ArtifactStagingDirectory)
+      displayName: 'Output build articatory folder'
 
     
   

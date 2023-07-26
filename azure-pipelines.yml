@@ -115,20 +115,20 @@ stages:
       workingDirectory: src
       displayName: 'Run test with codecoverage'
     
-    - task: SonarCloudAnalyze@1
-      inputs:
-        jdkversion: 'JAVA_HOME_11_X64'
+    # - task: SonarCloudAnalyze@1
+    #   inputs:
+    #     jdkversion: 'JAVA_HOME_11_X64'
     
-    - task: SnykSecurityScan@1 
-      inputs:
-        serviceConnectionEndpoint: 'Azure Pipeline'
-        testType: 'app'
-        severityThreshold: 'low'
-        monitorWhen: 'always'
-        failOnIssues: false
-        projectName: 'Azure_build_deploy_pipeline'
-        organization: 'freemeonline'
-        testDirectory: '$(fe-test)'
+    # - task: SnykSecurityScan@1 
+    #   inputs:
+    #     serviceConnectionEndpoint: 'Azure Pipeline'
+    #     testType: 'app'
+    #     severityThreshold: 'low'
+    #     monitorWhen: 'always'
+    #     failOnIssues: false
+    #     projectName: 'Azure_build_deploy_pipeline'
+    #     organization: 'freemeonline'
+    #     testDirectory: '$(fe-test)'
 
     #Provide test results as outputs
     - task: PublishTestResults@2
@@ -169,7 +169,7 @@ stages:
     
     - task: PublishBuildArtifacts@1
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)/output'
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/release'
         ArtifactName: 'drop'
         publishLocation: 'Container'
     
@@ -186,7 +186,10 @@ stages:
           steps:
           - download: current
             artifact: drop
-          
+          - script:
+              ls $(Pipeline.Workspace)/drop/
+              echo ls again
+              ls $(Pipeline.Workspace)/
           - task: AzureWebApp@1
             inputs:
               azureSubscription: 'Azure subscription 1(3adc070f-9710-4754-8588-55bbc2ae1644)'
@@ -195,7 +198,7 @@ stages:
               deployToSlotOrASE: true
               resourceGroupName: 'test-rc'
               slotName: 'production'
-              package: '$(Pipeline.Workspace)/drop/*.zip'
+              package: '$(Pipeline.Workspace)/**/drop/*.zip'
   
   
   

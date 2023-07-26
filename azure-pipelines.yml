@@ -165,7 +165,9 @@ stages:
         publishLocation: 'Container'
     
     - script: |
+        echo 'ls $(Build.ArtifactStagingDirectory)/output'
         ls $(Build.ArtifactStagingDirectory)/output
+        echo 'ls $(Build.ArtifactStagingDirectory)'
         ls $(Build.ArtifactStagingDirectory)
       displayName: 'Output build articatory folder'
 

@@ -5,9 +5,6 @@
 
 trigger:
   batch: true
-  branches:
-   include:
-   - master
 
 variables:
 - group: RSP-VARS
@@ -164,14 +161,35 @@ stages:
         ArtifactName: 'drop'
         publishLocation: 'Container'
     
-    - script: |
-        echo 'ls $(Build.ArtifactStagingDirectory)/output'
-        ls $(Build.ArtifactStagingDirectory)/output
-        echo 'ls $(Build.ArtifactStagingDirectory)'
-        ls $(Build.ArtifactStagingDirectory)
-      displayName: 'Output build articatory folder'
 
-    
+- stage: Deploy
+  pool:
+    vmImage: ubuntu-latest
+  jobs:
+  - deployment: 'deploy_to_dev'
+    environment: 'dev-env'
+    strategy:
+      runOnce:   
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@1
+            inputs:
+              buildType: 'current'
+              downloadType: 'single'
+              artifactName: 'drop'
+              downloadPath: '$(System.ArtifactsDirectory)'
+          
+          - task: AzureWebApp@1
+            inputs:
+              azureSubscription: 'Azure subscription 1(3adc070f-9710-4754-8588-55bbc2ae1644)'
+              appType: 'webAppLinux'
+              appName: 'test-mywebapp-react'
+              deployToSlotOrASE: true
+              resourceGroupName: 'test-rc'
+              slotName: 'production'
+              package: '$(System.ArtifactsDirectory)/**/*.zip'
+  
+  
   
   
 

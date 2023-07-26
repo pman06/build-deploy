@@ -163,7 +163,7 @@ stages:
         rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/output'
         includeRootFolder: false
         archiveType: 'zip'
-        archiveFile: '$(Build.BuildId).zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/release/$(Build.BuildId).zip'
         replaceExistingArchive: true
 
     

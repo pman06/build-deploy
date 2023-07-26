@@ -163,7 +163,7 @@ stages:
         rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/output'
         includeRootFolder: false
         archiveType: 'zip'
-        archiveFile: 'Build.BuildId).zip'
+        archiveFile: '$(Build.BuildId).zip'
         replaceExistingArchive: true
 
     
@@ -195,7 +195,7 @@ stages:
               deployToSlotOrASE: true
               resourceGroupName: 'test-rc'
               slotName: 'production'
-              package: '$(System.ArtifactsDirectory)/**/*.zip'
+              package: '$(Pipeline.Workspace)/drop/*.zip'
   
   
   

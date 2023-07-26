@@ -186,7 +186,7 @@ stages:
           steps:
           - download: current
             artifact: drop
-          - script:
+          - script: | 
               'ls $(Pipeline.Workspace)/drop/'
               'echo ls again'
               'ls $(Pipeline.Workspace)/'

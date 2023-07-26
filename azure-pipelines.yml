@@ -5,6 +5,10 @@
 
 trigger:
   batch: true
+  branches:
+    include:
+      - master
+      - dev
 
 variables:
 - group: RSP-VARS
@@ -154,6 +158,14 @@ stages:
         Contents: '**'
         TargetFolder: '$(Build.ArtifactStagingDirectory)/output'
         CleanTargetFolder: true
+    - task: ArchiveFiles@2
+      inputs:
+        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/output'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: 'Build.BuildId).zip'
+        replaceExistingArchive: true
+
     
     - task: PublishBuildArtifacts@1
       inputs:
@@ -172,12 +184,8 @@ stages:
       runOnce:   
         deploy:
           steps:
-          - task: DownloadBuildArtifacts@1
-            inputs:
-              buildType: 'current'
-              downloadType: 'single'
-              artifactName: 'drop'
-              downloadPath: '$(System.ArtifactsDirectory)'
+          - download: current
+            artifact: drop
           
           - task: AzureWebApp@1
             inputs:

@@ -187,9 +187,9 @@ stages:
           - download: current
             artifact: drop
           - script:
-              ls $(Pipeline.Workspace)/drop/
-              echo ls again
-              ls $(Pipeline.Workspace)/
+              'ls $(Pipeline.Workspace)/drop/'
+              'echo ls again'
+              'ls $(Pipeline.Workspace)/'
           - task: AzureWebApp@1
             inputs:
               azureSubscription: 'Azure subscription 1(3adc070f-9710-4754-8588-55bbc2ae1644)'
@@ -198,7 +198,7 @@ stages:
               deployToSlotOrASE: true
               resourceGroupName: 'test-rc'
               slotName: 'production'
-              package: '$(Pipeline.Workspace)/**/drop/*.zip'
+              package: '$(Pipeline.Workspace)/drop/*.zip'
   
   
   

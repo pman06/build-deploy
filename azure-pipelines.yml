@@ -151,7 +151,22 @@ stages:
       condition: succeededOrFailed()
       inputs:
         pollingTimeoutSec: '300'
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: '$(System.DefaultWorkingDirectory)/src/build'
+        Contents: '**'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/output'
+        CleanTargetFolder: true
+    
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/output'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
+    
 
+    
+  
   
 
       

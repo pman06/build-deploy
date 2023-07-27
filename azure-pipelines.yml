@@ -41,7 +41,7 @@ stages:
         versionSpec: '16.x'
       displayName: 'Install Node.js'
     - script: |
-        echo $(branch)
+        echo variables['Build.SourceBranchName']
         echo $(Build.SourceBranch)
       displayName: "Get branch name"
     - task: Cache@2
@@ -106,6 +106,7 @@ stages:
         mv ./src/$(file) ./src/application.yaml
         echo "ls /src"        
         ls ./src/
+      displayName: 'Move config files'
           
     - script: npm run build
       workingDirectory: src

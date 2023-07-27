@@ -16,12 +16,10 @@ variables:
   value: $(System.DefaultWorkingDirectory)/src/node_modules
 - name: fe-test
   value: "$(Build.SourcesDirectory)/src"
-- name: branch
-  value: '$(Build.SourceBranch)'
 - name: file
-  ${{ if eq('$(branch)', 'refs/heads/main') }}:
+  ${{ if eq( variables['Build.SourceBranchName'], 'master') }}:
     value: "application.yml"
-  ${{ elseif eq('$(branch)', 'refs/heads/dev') }}:
+  ${{ elseif eq( variables['Build.SourceBranchName'], 'dev') }}:
     value: "application-dev-pp.yaml"
   ${{ else }}:
     value: "application-az-pp.yaml"
@@ -43,7 +41,7 @@ stages:
         versionSpec: '16.x'
       displayName: 'Install Node.js'
     - script: |
-        echo $(branch)
+        echo $(variables['Build.SourceBranchName'])
         echo $(Build.SourceBranch)
       displayName: "Get branch name"
     - task: Cache@2
@@ -108,6 +106,7 @@ stages:
         mv ./src/$(file) ./src/application.yaml
         echo "ls /src"        
         ls ./src/
+      displayName: 'Move config files'
           
     - script: npm run build
       workingDirectory: src
@@ -183,7 +182,7 @@ stages:
     vmImage: ubuntu-latest
   jobs:
   - deployment: 'deploy_to_dev'
-    condition: and(succeeded(), eq(variables.branch,'refs/heads/dev'))
+    condition: and(succeeded(), eq( variables['Build.SourceBranchName'], 'dev'))
     environment: 'dev-env'
     strategy:
       runOnce:   

@@ -182,7 +182,7 @@ stages:
     vmImage: ubuntu-latest
   jobs:
   - deployment: 'deploy_to_dev'
-    condition: and(succeeded(), eq( variables['Build.SourceBranchName'], 'dev''))
+    condition: and(succeeded(), eq( variables['Build.SourceBranchName'], 'dev'))
     environment: 'dev-env'
     strategy:
       runOnce:   

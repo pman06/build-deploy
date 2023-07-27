@@ -16,11 +16,12 @@ variables:
   value: $(System.DefaultWorkingDirectory)/src/node_modules
 - name: fe-test
   value: "$(Build.SourcesDirectory)/src"
-
+- name: branch
+  value: '$(Build.SourceBranch)'
 - name: file
-  ${{ if eq('$(Build.SourceBranch)', 'ref/head/main') }}:
+  ${{ if eq('$(branch)', 'ref/head/main') }}:
     value: "application.yml"
-  ${{ elseif eq('$(Build.SourceBranch)', 'ref/head/dev') }}:
+  ${{ elseif eq('$(branch)', 'ref/head/dev') }}:
     value: "application-dev-pp.yaml"
   ${{ else }}:
     value: "application-az-pp.yaml"
@@ -174,22 +175,19 @@ stages:
         publishLocation: 'Container'
     
 
-- stage: Deploy
+- stage: Deploy_Dev
   pool:
     vmImage: ubuntu-latest
   jobs:
   - deployment: 'deploy_to_dev'
+    condition: and(succeeded(), eq(variables.branch,'ref/head/dev'))
     environment: 'dev-env'
     strategy:
       runOnce:   
         deploy:
           steps:
           - download: current
-            artifact: drop
-
-          - script: ls $(Pipeline.Workspace)/drop
-              
-              
+            artifact: drop                
           - task: AzureWebApp@1
             inputs:
               azureSubscription: 'Azure subscription 1(3adc070f-9710-4754-8588-55bbc2ae1644)'

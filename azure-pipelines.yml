@@ -17,7 +17,7 @@ variables:
 - name: fe-test
   value: "$(Build.SourcesDirectory)/src"
 - name: branch
-  value: '$(Build.SourceBranch)'
+  value: ${{Build.SourceBranch}}
 - name: file
   ${{ if eq('$(branch)', 'refs/heads/main') }}:
     value: "application.yml"

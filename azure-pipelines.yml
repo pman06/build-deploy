@@ -19,7 +19,7 @@ variables:
 - name: file
   ${{ if eq( variables['Build.SourceBranchName'], 'master') }}:
     value: "application.yml"
-  ${{ elseif variables['Build.SourceBranchName'], 'dev') }}:
+  ${{ elseif eq( variables['Build.SourceBranchName'], 'dev') }}:
     value: "application-dev-pp.yaml"
   ${{ else }}:
     value: "application-az-pp.yaml"

@@ -19,9 +19,9 @@ variables:
 - name: branch
   value: '$(Build.SourceBranch)'
 - name: file
-  ${{ if eq('$(branch)', 'ref/head/main') }}:
+  ${{ if eq('$(branch)', 'refs/head/main') }}:
     value: "application.yml"
-  ${{ elseif eq('$(branch)', 'ref/head/dev') }}:
+  ${{ elseif eq('$(branch)', 'refs/head/dev') }}:
     value: "application-dev-pp.yaml"
   ${{ else }}:
     value: "application-az-pp.yaml"
@@ -183,7 +183,7 @@ stages:
     vmImage: ubuntu-latest
   jobs:
   - deployment: 'deploy_to_dev'
-    condition: and(succeeded(), eq(variables.branch,'ref/head/dev'))
+    condition: and(succeeded(), eq(variables.branch,'refs/head/dev'))
     environment: 'dev-env'
     strategy:
       runOnce:   

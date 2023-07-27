@@ -15,7 +15,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React
+          Welcome to my dev environments process.env.REACT_APP_SENTRY_URL
         </a>
       </header>
     </div>

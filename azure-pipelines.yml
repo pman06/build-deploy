@@ -42,7 +42,10 @@ stages:
       inputs:
         versionSpec: '16.x'
       displayName: 'Install Node.js'
-
+    - script: |
+        echo $(branch)
+        echo $(Build.SourceBranch)
+      displayName: "Get branch name"
     - task: Cache@2
       inputs:
         key: '"npm" | "$(Agent.OS)" | src/package-lock.json'

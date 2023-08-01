@@ -16,10 +16,17 @@ variables:
   value: $(System.DefaultWorkingDirectory)/src/node_modules
 - name: fe-test
   value: "$(Build.SourcesDirectory)/src"
+- name: isMaster
+  value: $[eq(variables['Build.SourceBranch'], 'refs/heads/master')]
+- name: isDev
+  value: $[eq(variables['Build.SourceBranch'], 'refs/heads/dev')]
+- name: isUAT
+  value: $[eq(variables['Build.SourceBranch'], 'refs/heads/uat')]
+  
 - name: file
-  ${{ if eq( variables['Build.SourceBranchName'], 'master') }}:
+  ${{ if variables.isMaster }}:
     value: "application.yml"
-  ${{ elseif eq( variables['Build.SourceBranchName'], 'dev') }}:
+  ${{ elseif variables.isDev }}:
     value: "application-dev-pp.yaml"
   ${{ else }}:
     value: "application-az-pp.yaml"
@@ -42,7 +49,7 @@ stages:
       displayName: 'Install Node.js'
     - script: echo $(Build.SourceBranchName)
       displayName: "Get branch name"
-
+    
     - task: Cache@2
       inputs:
         key: '"npm" | "$(Agent.OS)" | src/package-lock.json'
@@ -177,7 +184,7 @@ stages:
     
 
 - stage: Deploy_Dev
-  condition: and(succeeded(), eq( variables['Build.SourceBranchName'], 'dev'))
+  condition: and(succeeded(), eq(variables.isDev, 'true'))
   displayName: 'deploy to dev'
   pool:
     vmImage: ubuntu-latest

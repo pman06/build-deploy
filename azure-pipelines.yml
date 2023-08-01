@@ -49,7 +49,7 @@ stages:
       displayName: 'Install Node.js'
     - script: echo $(Build.SourceBranchName)
       displayName: "Get branch name"
-
+    
     - task: Cache@2
       inputs:
         key: '"npm" | "$(Agent.OS)" | src/package-lock.json'
@@ -184,7 +184,7 @@ stages:
     
 
 - stage: Deploy_Dev
-  condition: and(succeeded(), variables.isDev )
+  condition: and(succeeded(), eq(variables.isDev, 'true'))
   displayName: 'deploy to dev'
   pool:
     vmImage: ubuntu-latest

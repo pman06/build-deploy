@@ -84,18 +84,6 @@ stages:
     #     cat application.yaml
     #   displayName: "Show attached KV secrets"
 
-    - task: SonarCloudPrepare@1
-      inputs:
-        SonarCloud: 'SONAR_TOKEN_TO_ADO'
-        organization: 'cooclass'
-        scannerMode: 'CLI'
-        configMode: 'manual'
-        cliProjectKey: 'build-deploy'
-        cliProjectName: 'build-deploy'
-        cliSources: './src'
-        extraProperties: |
-          sonar.flex.cobertura.reportPaths=$(System.DefaultWorkingDirectory)/src/coverage/cobertura-coverage.xml
-          sonar.exclusions=**/node_modules/**,**/test/**
 
     - task: DownloadSecureFile@1
       displayName: download Application file
@@ -113,10 +101,27 @@ stages:
         echo "ls /src"        
         ls ./src/
       displayName: 'Move config files'
+    
+    - task: SonarCloudPrepare@1
+      inputs:
+        SonarCloud: 'SONAR_TOKEN_TO_ADO'
+        organization: 'cooclass'
+        scannerMode: 'CLI'
+        configMode: 'manual'
+        cliProjectKey: 'build-deploy'
+        cliProjectName: 'build-deploy'
+        cliSources: './src'
+        extraProperties: |
+          sonar.flex.cobertura.reportPaths=$(System.DefaultWorkingDirectory)/src/coverage/cobertura-coverage.xml
+          sonar.exclusions=**/node_modules/**,**/test/**
           
     - script: npm run build
       workingDirectory: src
       displayName: "npm build"
+    
+    - task: SonarCloudAnalyze@1
+      inputs:
+        jdkversion: 'JAVA_HOME_11_X64'
     
     # Execute npm test with codecoverage
     - script: |
@@ -124,9 +129,7 @@ stages:
       workingDirectory: src
       displayName: 'Run test with codecoverage'
     
-    # - task: SonarCloudAnalyze@1
-    #   inputs:
-    #     jdkversion: 'JAVA_HOME_11_X64'
+    
     
     # - task: SnykSecurityScan@1 
     #   inputs:

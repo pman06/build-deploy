@@ -5,10 +5,7 @@
 
 trigger:
   batch: true
-  branches:
-    include:
-      - master
-      - dev
+
 
 variables:
 - group: RSP-VARS

@@ -119,15 +119,17 @@ stages:
       workingDirectory: src
       displayName: "npm build"
     
-    - task: SonarCloudAnalyze@1
-      inputs:
-        jdkversion: 'JAVA_HOME_11_X64'
-    
     # Execute npm test with codecoverage
     - script: |
         CI=true npm run test -- --coverage --watchAll=false --ci --reporters=default --reporters=jest-junit --coverageReporters=cobertura
       workingDirectory: src
       displayName: 'Run test with codecoverage'
+      
+    - task: SonarCloudAnalyze@1
+      inputs:
+        jdkversion: 'JAVA_HOME_11_X64'
+    
+    
     
     
     

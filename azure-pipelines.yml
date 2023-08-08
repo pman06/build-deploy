@@ -162,7 +162,7 @@ stages:
               publishLocation: "Container"
 
   - stage: Deploy_Dev
-    condition: and(succeeded(), eq(variables.isDev, 'true'), eq(variables.isNightly, 'false'), )
+    condition: and(succeeded(), eq(variables.isDev, 'true'), eq(variables.isNightly, 'false'))
     displayName: "deploy to dev"
     pool:
       vmImage: ubuntu-latest

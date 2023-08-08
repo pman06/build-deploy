@@ -29,9 +29,11 @@ stages:
               versionSpec: "16.x"
             displayName: "Install Node.js"
           - script: |
-              echo ${{ variables }}
-              echo ${{ variables.SourceBranchName }}
-              echo {{ variables.isNightly }}
+              echo $(isNightly)
+              echo $(isMaster)
+              echo $(isDev)
+              echo $(isUAT)
+              echo $(Build)
             displayName: "Get variables"
 
           - task: Cache@2

@@ -28,8 +28,8 @@ stages:
             inputs:
               versionSpec: "16.x"
             displayName: "Install Node.js"
-          - script: echo $(Build.SourceBranchName)
-            displayName: "Get branch name"
+          - script: echo $(variables)
+            displayName: "Get variables
 
           - task: Cache@2
             inputs:

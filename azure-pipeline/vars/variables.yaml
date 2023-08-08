@@ -13,9 +13,9 @@ variables:
   - name: isNightly
     value: ${{ eq(parameters.reason, 'Schedule') }}
   - name: file
-    ${{ if variables.isMaster }}:
+    ${{ if eq(variables.isMaster, 'true' }}:
       value: "application.yml"
-    ${{ elseif variables.isDev }}:
+    ${{ elseif eq(variables.isDev, 'true' }}:
       value: "application-dev-pp.yaml"
     ${{ else }}:
       value: "application-az-pp.yaml"

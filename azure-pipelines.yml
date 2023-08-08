@@ -33,7 +33,7 @@ stages:
               echo $(isMaster)
               echo $(isDev)
               echo $(isUAT)
-              echo $(Build)
+              echo $(Build.SourceBranch)
             displayName: "Get variables"
 
           - task: Cache@2

@@ -11,7 +11,7 @@ variables:
   - name: isUAT
     value: ${{ eq(parameters.branch, 'refs/heads/uat') }}
   - name: isNightly
-    value: ${{ eq(parameters.reason, 'Schedule' }}
+    value: ${{ eq(parameters.reason, 'Schedule') }}
   - name: file
     ${{ if variables.isMaster }}:
       value: "application.yml"

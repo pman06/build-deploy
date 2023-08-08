@@ -29,7 +29,7 @@ stages:
               versionSpec: "16.x"
             displayName: "Install Node.js"
           - script: echo $(variables)
-            displayName: "Get variables
+            displayName: "Get variables"
 
           - task: Cache@2
             inputs:

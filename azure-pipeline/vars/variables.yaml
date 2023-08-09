@@ -5,13 +5,14 @@ variables:
     value: "$(Build.SourcesDirectory)/src"
 
   - name: isMaster
-    value: ${{ eq(parameters.branch, 'refs/heads/master') }}
+    value: ${{ variables[Build.SourceBranch], 'refs/heads/master') }}
   - name: isDev
-    value: ${{ eq(parameters.branch, 'refs/heads/dev') }}
+    value: ${{ variables[Build.SourceBranch], 'refs/heads/dev') }}
   - name: isUAT
-    value: ${{ eq(parameters.branch, 'refs/heads/uat') }}
+    value: ${{ variables[Build.SourceBranch], 'refs/heads/uat') }}
   - name: isNightly
-    value: ${{ eq(parameters.reason, 'Schedule') }}
+    value: ${{ variables[Build.Reason], 'Schedule') }}
+
   - name: file
     ${{ if eq(variables.isMaster, 'true') }}:
       value: "application.yml"

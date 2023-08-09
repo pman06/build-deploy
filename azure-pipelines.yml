@@ -9,7 +9,7 @@ trigger:
 variables:
   - template: azure-pipeline\vars\variables.yaml
     parameters:
-      branch: variables['Build.SourceBranch']
+      branch: variables[Build.SourceBranch]
       reason: variables[Build.Reason]
 
 pool:

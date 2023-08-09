@@ -12,6 +12,8 @@ variables:
     value: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/uat') }}
   - name: isNightly
     value: ${{ eq(variables['Build.Reason'], 'Schedule') }}
+  - name: isTest
+    value: ${{ parameters.isTest }}
 
   - name: file
     ${{ if eq(variables.isMaster, 'true') }}:

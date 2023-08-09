@@ -9,7 +9,7 @@ trigger:
 variables:
   - template: azure-pipeline\vars\variables.yaml
     parameters:
-      isTest: variables['Build.SourceBranch']
+      isTest: ${{ variables['Build.SourceBranch'] }}
 
 pool:
   vmImage: ubuntu-latest

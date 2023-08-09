@@ -33,6 +33,7 @@ stages:
               echo $(isDev)
               echo $(isUAT)
               echo $(Build.SourceBranch)
+              echo $(isReason)
               echo $(isTest)
             displayName: "Get variables"
 

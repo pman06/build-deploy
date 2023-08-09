@@ -5,13 +5,13 @@ variables:
     value: "$(Build.SourcesDirectory)/src"
 
   - name: isMaster
-    value: ${{ variables[Build.SourceBranch], 'refs/heads/master' }}
+    value: ${{ eq(variables[Build.SourceBranch], 'refs/heads/master') }}
   - name: isDev
-    value: ${{ variables[Build.SourceBranch], 'refs/heads/dev' }}
+    value: ${{ eq(variables[Build.SourceBranch], 'refs/heads/dev' )}}
   - name: isUAT
-    value: ${{ variables[Build.SourceBranch], 'refs/heads/uat' }}
+    value: ${{ eq(variables[Build.SourceBranch], 'refs/heads/uat') }}
   - name: isNightly
-    value: ${{ variables[Build.Reason], 'Schedule' }}
+    value: ${{ eq(variables[Build.Reason], 'Schedule') }}
 
   - name: file
     ${{ if eq(variables.isMaster, 'true') }}:

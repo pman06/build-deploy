@@ -8,9 +8,6 @@ trigger:
 
 variables:
   - template: azure-pipeline\vars\variables.yaml
-    parameters:
-      branch: variables[Build.SourceBranch]
-      reason: variables[Build.Reason]
 
 pool:
   vmImage: ubuntu-latest

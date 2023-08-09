@@ -9,8 +9,7 @@ trigger:
 variables:
   - template: azure-pipeline\vars\variables.yaml
     parameters:
-      branch: variables['Build.SourceBranch']
-      reason: variables[Build.Reason]
+      isTest: ${{ variables['Build.SourceBranch'] }}
 
 pool:
   vmImage: ubuntu-latest
@@ -34,6 +33,7 @@ stages:
               echo $(isDev)
               echo $(isUAT)
               echo $(Build.SourceBranch)
+              echo $(isTest)
             displayName: "Get variables"
 
           - task: Cache@2

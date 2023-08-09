@@ -15,7 +15,7 @@ variables:
   - name: isTest
     value: ${{ parameters.isTest }}
   - name: isReason
-    value: ${{ variables['Build.SourceBranch']}}
+    value: ${{ variables['Build.Reason']}}
 
   - name: file
     ${{ if eq(variables.isMaster, 'true') }}:

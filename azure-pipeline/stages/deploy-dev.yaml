@@ -1,23 +1,4 @@
-# Node.js with React
-# Build a Node.js project that uses React.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
-
-trigger:
-  batch: true
-
-variables:
-  - template: azure-pipeline/vars/variables.yaml
-    parameters:
-      isTest: ${{ variables['Build.SourceBranch'] }}
-
-pool:
-  vmImage: ubuntu-latest
-  uiSource: /src
-
 stages:
-  - template: azure-pipeline/stages/build-stage.yaml
-
   - stage: Deploy_Dev
     condition: and(succeeded(), eq(variables.isDev, 'true'), eq(variables.isNightly, 'false'))
     displayName: "deploy to dev"

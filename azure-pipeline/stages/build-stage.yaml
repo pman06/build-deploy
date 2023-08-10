@@ -1,0 +1,151 @@
+stages:
+  - stage: Build_and_Test
+    pool:
+      vmImage: ubuntu-latest
+    jobs:
+      - job: "npm_install"
+        displayName: "Build and test"
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: "16.x"
+            displayName: "Install Node.js"
+          - script: |
+              echo $(isNightly)
+              echo $(isMaster)
+              echo $(isDev)
+              echo $(isUAT)
+              echo $(Build.SourceBranch)
+              echo $(isReason)
+              echo $(isTest)
+            displayName: "Get variables"
+
+          - task: Cache@2
+            inputs:
+              key: '"npm" | "$(Agent.OS)" | src/package-lock.json'
+              path: "$(nodeModules)"
+              cacheHitVar: "cachehit"
+            displayName: "cache node_modules"
+
+          - script: |
+              npm ci
+            workingDirectory: src
+            displayName: "npm install"
+            condition: ne(variables.cachehit, 'true')
+
+          # - task: AzureKeyVault@2
+          #   inputs:
+          #     azureSubscription: 'Azure subscription 1(3adc070f-9710-4754-8588-55bbc2ae1644)'
+          #     KeyVaultName: 'configdev'
+          #     SecretsFilter: '*'
+          #     RunAsPreJob: false
+
+          # - script: |
+          #     echo REACT_APP_FLATFILE_LICENSE_KEY: $(REACT-APP-FLATFILE-LICENSE-KEY) >> application.yaml
+          #     echo REACT_APP_FULLSTORY_ORG_ID: $(REACT-APP-FULLSTORY-ORG-ID) >> application.yaml
+          #     echo REACT_APP_FULLSTORY_ORG_ID: $(REACT-APP-FULLSTORY-ORG-ID) >> application.yaml
+          #     cp application.yaml $(System.DefaultWorkingDirectory)/src/
+          #     ls $(System.DefaultWorkingDirectory)/src/
+          #     echo and here
+          #     ls
+
+          # - script: |
+          #     cat application.yaml
+          #   displayName: "Show attached KV secrets"
+
+          - task: DownloadSecureFile@1
+            displayName: download Application file
+            name: secFile
+            inputs:
+              secureFile: "$(file)"
+
+          - script: |
+              echo "ls temp directory"
+              ls $(Agent.TempDirectory)/$(file)
+              echo "ls secfile.securefilepath"
+              ls $(secFile.secureFilePath)
+              cp $(Agent.TempDirectory)/$(file) ./src/
+              mv ./src/$(file) ./src/application.yaml
+              echo "ls /src"        
+              ls ./src/
+            displayName: "Move config files"
+
+          - task: SonarCloudPrepare@1
+            inputs:
+              SonarCloud: "SONAR_TOKEN_TO_ADO"
+              organization: "cooclass"
+              scannerMode: "CLI"
+              configMode: "manual"
+              cliProjectKey: "build-deploy"
+              cliProjectName: "build-deploy"
+              cliSources: "./src"
+              extraProperties: |
+                sonar.flex.cobertura.reportPaths=$(System.DefaultWorkingDirectory)/src/coverage/cobertura-coverage.xml
+                sonar.exclusions=**/node_modules/**,**/test/**
+
+          - script: npm run build
+            workingDirectory: src
+            displayName: "npm build"
+
+          # Execute npm test with codecoverage
+          - script: |
+              CI=true npm run test -- --coverage --watchAll=false --ci --reporters=default --reporters=jest-junit --coverageReporters=cobertura
+            workingDirectory: src
+            displayName: "Run test with codecoverage"
+
+          - task: SonarCloudAnalyze@1
+            inputs:
+              jdkversion: "JAVA_HOME_11_X64"
+
+          # - task: SnykSecurityScan@1
+          #   inputs:
+          #     serviceConnectionEndpoint: 'Azure Pipeline'
+          #     testType: 'app'
+          #     severityThreshold: 'low'
+          #     monitorWhen: 'always'
+          #     failOnIssues: false
+          #     projectName: 'Azure_build_deploy_pipeline'
+          #     organization: 'freemeonline'
+          #     testDirectory: '$(fe-test)'
+
+          #Provide test results as outputs
+          - task: PublishTestResults@2
+            displayName: "supply npm test results to pipelines"
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFormat: "JUnit"
+              testResultsFiles: "src/junit.xml"
+
+          #Provide coverage as outputs
+          - task: PublishCodeCoverageResults@1
+            condition: succeededOrFailed()
+            displayName: "Publish code coverage"
+            inputs:
+              codeCoverageTool: Cobertura
+              summaryFileLocation: "$(System.DefaultWorkingDirectory)/src/coverage/cobertura-coverage.xml"
+              reportDirectory: "$(System.DefaultWorkingDirectory)/src/coverage"
+              failIfCoverageEmpty: false
+
+          - task: SonarCloudPublish@1
+            condition: succeededOrFailed()
+            inputs:
+              pollingTimeoutSec: "300"
+          - task: CopyFiles@2
+            inputs:
+              SourceFolder: "$(System.DefaultWorkingDirectory)/src/"
+              Contents: "build/**/*"
+              TargetFolder: "$(Build.ArtifactStagingDirectory)/output"
+              CleanTargetFolder: true
+          - task: ArchiveFiles@2
+            inputs:
+              rootFolderOrFile: "$(Build.ArtifactStagingDirectory)/output"
+              includeRootFolder: false
+              archiveType: "zip"
+              archiveFile: "$(Build.ArtifactStagingDirectory)/release/$(Build.BuildId).zip"
+              replaceExistingArchive: true
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "$(Build.ArtifactStagingDirectory)/release"
+              ArtifactName: "drop"
+              publishLocation: "Container"

@@ -15,7 +15,7 @@ function App() {
         >
           Learn React
         </a>
-        Welcome to my dev environments process.env.REACT_APP_SENTRY_URL
+        Welcome again stil deploying to dev env
       </header>
     </div>
   );

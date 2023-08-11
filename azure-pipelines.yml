@@ -17,5 +17,5 @@ pool:
 
 stages:
   - template: azure-pipeline/stages/build-stage.yaml
-  - template: azure-pipeline/stages/deploy-dev.yaml
-  - template: azure-pipeline/stages/deploy-uat.yaml
+  - template: azure-pipeline/stages/deployDev_stage.yaml
+  - template: azure-pipeline/stages/deployUAT_stage.yaml

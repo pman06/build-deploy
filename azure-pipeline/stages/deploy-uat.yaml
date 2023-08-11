@@ -1,5 +1,5 @@
 stages:
-  - stage: Deploy_Dev
+  - stage: Deploy_UAT
     condition: and(succeeded(), eq(variables.isUAT, 'true'), eq(variables.isNightly, 'false'))
     displayName: "deploy to UAT"
     pool:

@@ -5,10 +5,6 @@
 # $project=$Build.TriggeredBy.ProjectID
 # $buildId=$Build.BuildId
 # $token=$SYSTEM_ACCESSTOKEN
-# $url='https://dev.azure.com/{organization}/{project}/_apis/build/builds/{buildId}/workitems?api-version=7.0'
-# $authorization="Bearer $token"
-# curl()
-
 import os
 import requests
 
@@ -21,7 +17,35 @@ token=os.environ['SYSTEM_ACCESSTOKEN']
 print(token)
 project=os.environ['SYSTEM_TEAMPROJECT']
 organization='cooclass'
-url=f'https://dev.azure.com/{organization}/{project}/_apis/build/builds/160/workitems?api-version=7.0'
+build_url=f'https://dev.azure.com/{organization}/{project}/_apis/build/builds/160/workitems?api-version=7.0'
 headers = {'Authorization': f'Bearer {token}'}
-response = requests.get(url, headers=headers)
+response = requests.get(build_url, headers=headers)
 print(response.json())
+output=response.json()
+count = output['count']
+def get_item(id):
+    fields=["System.WorkItemType","System.State"]
+    url=f'https://dev.azure.com/{organization}/{project}/_apis/wit/workitems/{id}?fields={fields}api-version=7.0'
+    print(response.json())
+    response=requests.get(url, headers=headers)
+    return response.json()
+
+def update_item(id):
+    response=get_item(id)
+    url=f'https://dev.azure.com/{organization}/{project}/_apis/wit/workitems/{id}?validateOnly={validateOnly}&api-version=7.0'
+    print(f'WorkItem = {response["System.WorkItemType"]}')
+    if (response['System.WorkItemType'] == 'Task') and (response['System.State']=='Deploy to test'):
+        json={
+            'op': 'replace',
+            'path': '/fields/System.State',
+            'value':'Ready to UAT'
+		}
+        response=requests.patch(url, json=json, headers=headers)
+        return response
+    else:
+        print('Cant patch item: not a task and not acive')
+
+if count > 0:
+    for i in range(count):
+        update_item(count['value'][i]['id'])
+        

@@ -40,8 +40,8 @@ def update_item(id):
 		}
         headers={'Authorization': f'Bearer {token}','Content-Type': 'application/json-patch+json'}
         response=requests.patch(url, data=data, headers=headers)
-        print(response)
-        return response.json
+        print(response.text)
+        return response.json()
     else:
         print('Cant patch item: not a task and not acive')
 

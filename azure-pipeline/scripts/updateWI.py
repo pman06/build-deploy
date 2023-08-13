@@ -32,7 +32,6 @@ def get_item(id):
 def update_item(id):
     response=get_item(id)
     url=f'https://dev.azure.com/{organization}/{project}/_apis/wit/workitems/{id}?api-version=7.0'
-    print(f'WorkItem = {response["fields"]["System.WorkItemType"]}')
     if (response['fields']["System.WorkItemType"] == 'Epic') and (response['fields']['System.State']=='Active'):
         json={
             'op': 'replace',
@@ -41,11 +40,12 @@ def update_item(id):
 		}
         headers={'Authorization': f'Bearer {token}','Content-Type': 'application/json-patch+json'}
         response=requests.patch(url, json=json, headers=headers)
-        return response
+        return response.json
     else:
         print('Cant patch item: not a task and not acive')
 
 if count > 0:
     for i in range(count):
-        update_item(output['value'][i]['id'])
+        response= update_item(output['value'][i]['id'])
+        print(response)
         

@@ -35,15 +35,15 @@ def update_item(id):
     url=f'https://dev.azure.com/{organization}/{project}/_apis/wit/workitems/{id}?api-version=7.0'
     
     if (response['fields']["System.WorkItemType"] == 'Epic') and (response['fields']['System.State']=='Active'):
-        data={
+        data=[{
             'op': 'replace',
             'path': '/fields/System.State',
             'value':'Resolved'
-		}
-        print(json.dump(data))
+		}]
+
 		
         headers={'Authorization': f'Bearer {token}','Content-Type': 'application/json-patch+json', 'charset':'utf-8'}
-        response=requests.patch(url, data=json.dumps(data), headers=headers)
+        response=requests.patch(url, json=data, headers=headers)
         print(response.text)
         return response.json()
     else:

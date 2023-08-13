@@ -32,7 +32,7 @@ def get_item(id):
 def update_item(id):
     response=get_item(id)
     url=f'https://dev.azure.com/{organization}/{project}/_apis/wit/workitems/{id}?api-version=7.0'
-    print(f'WorkItem = {response['fields']["System.WorkItemType"]}')
+    print(f'WorkItem = {response["fields"]["System.WorkItemType"]}')
     if (response['fields']["System.WorkItemType"] == 'Epic') and (response['fields']['System.State']=='Active'):
         json={
             'op': 'replace',

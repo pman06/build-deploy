@@ -47,5 +47,5 @@ def update_item(id):
 
 if count > 0:
     for i in range(count):
-        update_item(output['value'][f'{i}']['id'])
+        update_item(output['value'][i]['id'])
         

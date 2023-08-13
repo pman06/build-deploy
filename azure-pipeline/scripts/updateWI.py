@@ -39,7 +39,7 @@ def update_item(id):
             'path': '/fields/System.State',
             'value':'Resolved'
 		}
-        headers+={'Content-Type': 'application/json-patch+json'}
+        headers+={'Authorization': f'Bearer {token}','Content-Type': 'application/json-patch+json'}
         response=requests.patch(url, json=json, headers=headers)
         return response
     else:

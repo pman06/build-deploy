@@ -32,12 +32,12 @@ def get_item(id):
 def update_item(id):
     response=get_item(id)
     url=f'https://dev.azure.com/{organization}/{project}/_apis/wit/workitems/{id}?api-version=7.0'
-    print(f'WorkItem = {response["System.WorkItemType"]}')
-    if (response['fields'] == 'Task') and (response['System.State']=='Deploy to test'):
+    print(f'WorkItem = {response['fields']["System.WorkItemType"]}')
+    if (response['fields']["System.WorkItemType"] == 'Epic') and (response['fields']['System.State']=='Active'):
         json={
             'op': 'replace',
             'path': '/fields/System.State',
-            'value':'Ready to UAT'
+            'value':'Resolved'
 		}
         headers+={'Content-Type': 'application/json-patch+json'}
         response=requests.patch(url, json=json, headers=headers)

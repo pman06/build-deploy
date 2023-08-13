@@ -40,7 +40,8 @@ def update_item(id):
             'path': '/fields/System.State',
             'value':'Resolved'
 		}
-        print(json.dumps(data))
+        print(json.dump(data))
+		
         headers={'Authorization': f'Bearer {token}','Content-Type': 'application/json-patch+json', 'charset':'utf-8'}
         response=requests.patch(url, data=json.dumps(data), headers=headers)
         print(response.text)

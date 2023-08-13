@@ -20,12 +20,10 @@ organization='cooclass'
 build_url=f'https://dev.azure.com/{organization}/{project}/_apis/build/builds/160/workitems?api-version=7.0'
 headers = {'Authorization': f'Bearer {token}'}
 response = requests.get(build_url, headers=headers)
-print(response.json())
+
 output=response.json()
 count = output['count']
-def get_item(id):
-    fields=["System.WorkItemType","System.State"]
-    
+def get_item(id):   
     url=f'https://dev.azure.com/{organization}/{project}/_apis/wit/workitems/{id}?api-version=7.0'
     response=requests.get(url, headers=headers)
     print(response.json())
@@ -33,14 +31,15 @@ def get_item(id):
 
 def update_item(id):
     response=get_item(id)
-    url=f'https://dev.azure.com/{organization}/{project}/_apis/wit/workitems/{id}?validateOnly={validateOnly}&api-version=7.0'
+    url=f'https://dev.azure.com/{organization}/{project}/_apis/wit/workitems/{id}?api-version=7.0'
     print(f'WorkItem = {response["System.WorkItemType"]}')
-    if (response['System.WorkItemType'] == 'Task') and (response['System.State']=='Deploy to test'):
+    if (response['fields'] == 'Task') and (response['System.State']=='Deploy to test'):
         json={
             'op': 'replace',
             'path': '/fields/System.State',
             'value':'Ready to UAT'
 		}
+        headers+={'Content-Type': 'application/json-patch+json'}
         response=requests.patch(url, json=json, headers=headers)
         return response
     else:

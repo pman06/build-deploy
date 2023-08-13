@@ -22,5 +22,5 @@ project=os.environ['SYSTEM_TEAMPROJECT']
 organization='cooclass'
 url=f'https://dev.azure.com/{organization}/{project}/_apis/build/builds/{buildId}/workitems?api-version=7.0'
 
-response = requests.get(api_url, headers=headers)
+response = requests.get(url, headers=headers)
 print(response.json())

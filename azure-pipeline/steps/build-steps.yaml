@@ -3,6 +3,8 @@ steps:
     inputs:
       scriptSource: "filePath"
       scriptPath: "$(System.DefaultWorkingDirectory)/azure-pipeline/scripts/updateWI.py"
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
   # - task: NodeTool@0
   #   inputs:
   #     versionSpec: "16.x"

@@ -24,8 +24,8 @@ print(response.json())
 output=response.json()
 count = output['count']
 def get_item(id):
-    fields=["/fields/System.WorkItemType","/fields/System.State"]
-    url=f'https://dev.azure.com/{organization}/{project}/_apis/wit/workitems/{id}?fields={fields}api-version=7.0'
+    fields=["System.WorkItemType","System.State"]
+    url=f'https://dev.azure.com/{organization}/{project}/_apis/wit/workitems/{id}?fields={fields}&api-version=7.0'
     response=requests.get(url, headers=headers)
     print(response.json())
     return response.json()

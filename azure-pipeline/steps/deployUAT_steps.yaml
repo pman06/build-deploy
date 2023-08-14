@@ -5,12 +5,13 @@ steps:
     inputs:
       azureSubscription: "Azure subscription 1(3adc070f-9710-4754-8588-55bbc2ae1644)"
       appType: "webAppLinux"
-      appName: "test-mywebapp-react"
+      appName: "test-mywebapp-react-uat"
       package: "$(Pipeline.Workspace)/drop/*.zip"
       runtimeStack: "NODE|16-lts"
       startUpCommand: "npm install -g serve && serve -s build"
 
   - task: PythonScript@0
+    condition: succeeded()
     inputs:
       scriptSource: "filePath"
       scriptPath: "$(System.DefaultWorkingDirectory)/azure-pipeline/scripts/updateWI.py"

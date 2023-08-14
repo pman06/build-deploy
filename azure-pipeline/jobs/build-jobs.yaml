@@ -1,0 +1,5 @@
+jobs:
+  - job: "npm_install"
+    displayName: "Build and test"
+    steps:
+      - template: ../steps/build-steps.yaml

@@ -1,0 +1,8 @@
+stages:
+  - stage: Deploy_UAT
+    condition: and(succeeded(), eq(variables.isUAT, 'true'), eq(variables.isNightly, 'false'))
+    displayName: "deploy to UAT"
+    pool:
+      vmImage: ubuntu-latest
+    jobs:
+      - template: ../jobs/deployUAT_job.yaml

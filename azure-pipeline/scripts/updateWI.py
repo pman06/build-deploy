@@ -14,7 +14,6 @@ headers = {'Authorization': f'Bearer {token}'}
 
 def get_related_work_item():
     build_url=f'https://dev.azure.com/{organization}/{project}/_apis/build/builds/{buildId}/workitems?api-version=7.0'
-    
     response = requests.get(build_url, headers=headers)
     return response.json()
 

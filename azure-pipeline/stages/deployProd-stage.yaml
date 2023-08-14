@@ -1,0 +1,8 @@
+stages:
+  - stage: Deploy_Prod
+    condition: and(succeeded(), eq(variables.isMaster, 'true'), eq(variables.isNightly, 'false'))
+    displayName: "deploy to Prod"
+    pool:
+      vmImage: ubuntu-latest
+    jobs:
+      - template: ../jobs/deployProd_job.yaml

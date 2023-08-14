@@ -7,7 +7,7 @@ variables:
   - name: isMaster
     value: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/master') }}
   - name: isDev
-    value: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/dev' )}}
+    value: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/dev') }}
   - name: isUAT
     value: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/uat') }}
   - name: isNightly

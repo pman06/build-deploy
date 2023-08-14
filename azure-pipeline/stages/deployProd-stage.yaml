@@ -1,6 +1,6 @@
 stages:
   - stage: Deploy_Prod
-    condition: and(succeeded(), eq(variables.isMaster, 'true'), eq(variables.isNightly, 'false'))
+    condition: and(not(failed('Build_and_Test'), eq(variables.isMaster, 'true'), eq(variables.isNightly, 'false'))
     displayName: "deploy to Prod"
     pool:
       vmImage: ubuntu-latest

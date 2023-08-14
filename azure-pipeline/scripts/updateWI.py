@@ -1,29 +1,23 @@
-# echo $SYSTEM_ACCESSTOKEN
-# echo $Build.BuildId
-# echo $System.CollectionId
-# $organization=$System.CollectionId
-# $project=$Build.TriggeredBy.ProjectID
-# $buildId=$Build.BuildId
-# $token=$SYSTEM_ACCESSTOKEN
 import os
 import requests
 import json
-
-print(os.environ)
-print(os.environ['SYSTEM_ACCESSTOKEN'])
-print(os.environ['BUILD_BUILDID'])
-
 buildId=os.environ['BUILD_BUILDID']
 token=os.environ['SYSTEM_ACCESSTOKEN']
-print(token)
+
 project=os.environ['SYSTEM_TEAMPROJECT']
 organization='cooclass'
-build_url=f'https://dev.azure.com/{organization}/{project}/_apis/build/builds/160/workitems?api-version=7.0'
+buildId=os.environ['BUILD_BUILDID']
+token=os.environ['SYSTEM_ACCESSTOKEN']
+project=os.environ['SYSTEM_TEAMPROJECT']
+organization='cooclass'
 headers = {'Authorization': f'Bearer {token}'}
-response = requests.get(build_url, headers=headers)
 
-output=response.json()
-count = output['count']
+def get_related_work_item():
+    build_url=f'https://dev.azure.com/{organization}/{project}/_apis/build/builds/{buildId}/workitems?api-version=7.0'
+    
+    response = requests.get(build_url, headers=headers)
+    return response.json()
+
 def get_item(id):   
     url=f'https://dev.azure.com/{organization}/{project}/_apis/wit/workitems/{id}?api-version=7.0'
     response=requests.get(url, headers=headers)
@@ -33,24 +27,26 @@ def get_item(id):
 def update_item(id):
     response=get_item(id)
     url=f'https://dev.azure.com/{organization}/{project}/_apis/wit/workitems/{id}?api-version=7.0'
-    
-    if (response['fields']["System.WorkItemType"] == 'Epic') and (response['fields']['System.State']=='Active'):
+    if (response['fields']["System.WorkItemType"] == 'Task') and (response['fields']['System.State']=='Deploy to test'):
         data=[{
             'op': 'replace',
             'path': '/fields/System.State',
-            'value':'Resolved'
+            'value':'Ready to UAT'
 		}]
-
 		
         headers={'Authorization': f'Bearer {token}','Content-Type': 'application/json-patch+json', 'charset':'utf-8'}
         response=requests.patch(url, json=data, headers=headers)
         print(response.text)
         return response.json()
     else:
-        print('Cant patch item: not a task and not acive')
+        print('Cant patch item: not a task or State not "Deploy to test"')
 
+
+output=get_related_work_item()
+count = output['count']
 if count > 0:
     for i in range(count):
-        response= update_item(output['value'][i]['id'])
+        response=update_item(output['value'][i]['id'])
         print(response)
-        
+else:
+    print('No related work items found')

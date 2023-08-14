@@ -14,6 +14,8 @@ variables:
     value: ${{ eq(variables['Build.Reason'], 'Schedule') }}
   - name: isTest
     value: ${{ parameters.isTest }}
+  - name: isReason
+    value: ${{ variables['Build.Reason']}}
 
   - name: file
     ${{ if eq(variables.isMaster, 'true') }}:

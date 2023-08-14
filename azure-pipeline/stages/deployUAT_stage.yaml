@@ -1,6 +1,6 @@
 stages:
   - stage: Deploy_UAT
-    condition: and(not(failed('Build_and_Test'), eq(variables.isUAT, 'true'), eq(variables.isNightly, 'false'))
+    condition: and(not(failed('Build_and_Test')), eq(variables.isUAT, 'true'), eq(variables.isNightly, 'false'))
     displayName: "deploy to UAT"
     pool:
       vmImage: ubuntu-latest

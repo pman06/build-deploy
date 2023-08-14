@@ -1,0 +1,8 @@
+jobs:
+  - deployment: "deploy_to_prod"
+    environment: "prod-env"
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - template: ../steps/deployProd_steps.yaml

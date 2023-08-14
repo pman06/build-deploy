@@ -1,0 +1,4 @@
+steps:
+  - download: current
+    artifact: drop
+  - script: echo "deploy to prod"

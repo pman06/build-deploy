@@ -1,0 +1,6 @@
+stages:
+  - stage: Build_and_Test
+    pool:
+      vmImage: ubuntu-latest
+    jobs:
+      - template: ../jobs/build-jobs.yaml

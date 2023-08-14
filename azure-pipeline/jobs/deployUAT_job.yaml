@@ -1,0 +1,8 @@
+jobs:
+  - deployment: "deploy_to_uat"
+    environment: "uat-env"
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - template: ../steps/deployUAT_steps.yaml

@@ -1,0 +1,26 @@
+variables:
+  - name: nodeModules
+    value: $(System.DefaultWorkingDirectory)/src/node_modules
+  - name: fe-test
+    value: "$(Build.SourcesDirectory)/src"
+
+  - name: isMaster
+    value: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/master') }}
+  - name: isDev
+    value: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/dev') }}
+  - name: isUAT
+    value: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/uat') }}
+  - name: isNightly
+    value: ${{ eq(variables['Build.Reason'], 'Schedule') }}
+  - name: isTest
+    value: ${{ parameters.isTest }}
+  - name: isReason
+    value: ${{ variables['Build.Reason']}}
+
+  - name: file
+    ${{ if eq(variables.isMaster, 'true') }}:
+      value: "application.yml"
+    ${{ elseif eq(variables.isDev, 'true') }}:
+      value: "application-dev-pp.yaml"
+    ${{ else }}:
+      value: "application-az-pp.yaml"

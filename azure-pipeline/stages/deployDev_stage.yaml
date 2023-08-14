@@ -1,0 +1,9 @@
+stages:
+  - stage: Deploy_Dev
+    dependsOn: Build_and_Test
+    condition: and(not(failed('Build_and_Test')), eq(variables.isDev, 'true'), eq(variables.isNightly, 'false'))
+    displayName: "deploy to dev"
+    pool:
+      vmImage: ubuntu-latest
+    jobs:
+      - template: ../jobs/deployDev_job.yaml

@@ -11,7 +11,7 @@ steps:
       echo $(Build.SourceBranch)
       echo $(isReason)
       echo $(isTest)
-      ls -Rl $(System.DefaultWorkingDirectory)/azure-pipeline/scripts/
+      ls -Rl $(System.DefaultWorkingDirectory)/azure-pipeline/
     displayName: "Get variables"
 
   - task: Cache@2

@@ -14,6 +14,6 @@ steps:
     condition: succeeded()
     inputs:
       scriptSource: "filePath"
-      scriptPath: "$(System.DefaultWorkingDirectory)/azure-pipeline/scripts/updateWI.py"
+      scriptPath: "azure-pipeline/scripts/updateWI.py"
     env:
       SYSTEM_ACCESSTOKEN: $(System.AccessToken)

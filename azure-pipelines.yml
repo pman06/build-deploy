@@ -5,6 +5,10 @@
 name: Build-Deploy-$(Build.BuildId)
 trigger:
   batch: true
+  branches:
+    include:
+      - master
+      - dev
 
 schedules:
   - cron: 0 21 * * *

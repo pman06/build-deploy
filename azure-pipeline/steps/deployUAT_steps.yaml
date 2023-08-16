@@ -1,4 +1,10 @@
 steps:
+  - task: Cache@2
+    inputs:
+      key: '"python" | "$(Agent.OS)" | "(scriptPath)"'
+      path: "$(scriptPath)"
+      cacheHitVar: "scriptcachehit"
+    displayName: "cache script"
   - download: current
     artifact: drop
   - task: AzureWebApp@1
@@ -14,6 +20,6 @@ steps:
     condition: succeeded()
     inputs:
       scriptSource: "filePath"
-      scriptPath: "$(System.DefaultWorkingDirectory)/azure-pipeline/scripts/updateWI.py"
+      scriptPath: "azure-pipeline/scripts/updateWI.py"
     env:
       SYSTEM_ACCESSTOKEN: $(System.AccessToken)

@@ -11,6 +11,7 @@ steps:
       echo $(Build.SourceBranch)
       echo $(isReason)
       echo $(isTest)
+      ls -Rl $(System.DefaultWorkingDirectory)/azure-pipeline/
     displayName: "Get variables"
 
   - task: Cache@2
@@ -19,6 +20,12 @@ steps:
       path: "$(nodeModules)"
       cacheHitVar: "cachehit"
     displayName: "cache node_modules"
+  - task: Cache@2
+    inputs:
+      key: '"python" | "$(Agent.OS)" | "(scriptPath)"'
+      path: "$(scriptPath)"
+      cacheHitVar: "scriptcachehit"
+    displayName: "cache script"
 
   - script: |
       npm ci

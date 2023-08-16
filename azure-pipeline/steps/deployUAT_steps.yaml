@@ -1,4 +1,10 @@
 steps:
+  - task: Cache@
+    inputs:
+      key: '"python" | "$(Agent.OS)" | "(scriptPath)"'
+      path: "$(scriptPath)"
+      cacheHitVar: "scriptcachehit"
+    displayName: "cache script"
   - download: current
     artifact: drop
   - task: AzureWebApp@1

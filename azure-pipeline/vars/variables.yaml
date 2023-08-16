@@ -1,6 +1,8 @@
 variables:
   - name: nodeModules
     value: $(System.DefaultWorkingDirectory)/src/node_modules
+  - name: scriptPath
+    value: $(System.DefaultWorkingDirectory)/azure-pipeline/scripts/updateWI.py
   - name: fe-test
     value: "$(Build.SourcesDirectory)/src"
 

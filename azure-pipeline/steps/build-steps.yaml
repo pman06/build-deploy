@@ -130,22 +130,41 @@ steps:
     condition: succeededOrFailed()
     inputs:
       pollingTimeoutSec: "300"
+  # - task: CopyFiles@2
+  #   inputs:
+  #     SourceFolder: "$(System.DefaultWorkingDirectory)/src/"
+  #     Contents: "build/**/*"
+  #     TargetFolder: "$(Build.ArtifactStagingDirectory)/output"
+  #     CleanTargetFolder: true
   - task: CopyFiles@2
     inputs:
-      SourceFolder: "$(System.DefaultWorkingDirectory)/src/"
+      SourceFolder: "$(System.DefaultWorkingDirectory)"
       Contents: "build/**/*"
-      TargetFolder: "$(Build.ArtifactStagingDirectory)/output"
+      TargetFolder: "$(Build.ArtifactStagingDirectory)/output/rsp"
       CleanTargetFolder: true
+    displayName: "Copy files to artifact directory"
+  # - task: ArchiveFiles@2
+  #   inputs:
+  #     rootFolderOrFile: "$(Build.ArtifactStagingDirectory)/output"
+  #     includeRootFolder: false
+  #     archiveType: "zip"
+  #     archiveFile: "$(Build.ArtifactStagingDirectory)/release/$(Build.BuildId).zip"
+  #     replaceExistingArchive: true
   - task: ArchiveFiles@2
+    displayName: "Archive files"
     inputs:
-      rootFolderOrFile: "$(Build.ArtifactStagingDirectory)/output"
+      rootFolderOrFile: "$(Build.ArtifactStagingDirectory)/output/rsp"
       includeRootFolder: false
-      archiveType: "zip"
-      archiveFile: "$(Build.ArtifactStagingDirectory)/release/$(Build.BuildId).zip"
+      archiveType: zip
+      archiveFile: "$(Build.ArtifactStagingDirectory)/release/rsp-$(Build.BuildId).zip"
       replaceExistingArchive: true
+  # - task: PublishBuildArtifacts@1
+  #   inputs:
+  #     PathtoPublish: "$(Build.ArtifactStagingDirectory)/release"
+  #     ArtifactName: "drop"
+  #     publishLocation: "Container"
 
-  - task: PublishBuildArtifacts@1
+  - task: PublishPipelineArtifact@0
+    displayName: "Publish server pipeline artifacts"
     inputs:
-      PathtoPublish: "$(Build.ArtifactStagingDirectory)/release"
-      ArtifactName: "drop"
-      publishLocation: "Container"
+      targetPath: "$(Build.ArtifactStagingDirectory)/release/"

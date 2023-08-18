@@ -3,12 +3,22 @@ steps:
     artifact: drop
 
   - script: ls -R
-
-  - task: AzureWebApp@1
+  - task: AzureRmWebAppDeployment@4
     inputs:
+      ConnectionType: "AzureRM"
       azureSubscription: "Azure subscription 1(3adc070f-9710-4754-8588-55bbc2ae1644)"
       appType: "webAppLinux"
-      appName: "test-mywebapp-react"
-      package: "$(Pipeline.Workspace)/drop/*.zip"
-      runtimeStack: "NODE|16-lts"
-      startUpCommand: "npm install -g serve && serve -s build"
+      WebAppName: "test-mywebapp-react"
+      deployToSlotOrASE: true
+      ResourceGroupName: "test-rc"
+      SlotName: "production"
+      packageForLinux: "$(System.DefaultWorkingDirectory)/**/*.zip"
+
+  # - task: AzureWebApp@1
+  #   inputs:
+  #     azureSubscription: "Azure subscription 1(3adc070f-9710-4754-8588-55bbc2ae1644)"
+  #     appType: "webAppLinux"
+  #     appName: "test-mywebapp-react"
+  #     package: "$(Pipeline.Workspace)/drop/*.zip"
+  #     runtimeStack: "NODE|16-lts"
+  #     startUpCommand: "npm install -g serve && serve -s build"

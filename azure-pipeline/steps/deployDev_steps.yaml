@@ -1,6 +1,9 @@
 steps:
   - download: current
     artifact: drop
+
+  - script: ls -R
+
   - task: AzureWebApp@1
     inputs:
       azureSubscription: "Azure subscription 1(3adc070f-9710-4754-8588-55bbc2ae1644)"

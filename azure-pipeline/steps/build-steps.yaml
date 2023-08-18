@@ -22,7 +22,7 @@ steps:
     displayName: "cache node_modules"
   - task: Cache@2
     inputs:
-      key: '"python" | "$(Agent.OS)" | "(scriptPath)"'
+      key: '"python" | "$(Agent.OS)" | "$(scriptPath)"'
       path: "$(scriptPath)"
       cacheHitVar: "scriptcachehit"
     displayName: "cache script"

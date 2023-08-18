@@ -12,7 +12,8 @@ steps:
       deployToSlotOrASE: true
       ResourceGroupName: "test-rc"
       SlotName: "production"
-      packageForLinux: "$(System.DefaultWorkingDirectory)/**/*.zip"
+      packageForLinux: "$(Pipeline.Workspace)/drop/**.zip"
+      runtimeStack: "NODE|16-lts"
 
   # - task: AzureWebApp@1
   #   inputs:

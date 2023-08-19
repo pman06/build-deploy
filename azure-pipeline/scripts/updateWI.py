@@ -1,8 +1,6 @@
 import os
 import requests
 import json
-buildId=os.environ['BUILD_BUILDID']
-token=os.environ['SYSTEM_ACCESSTOKEN']
 
 project=os.environ['SYSTEM_TEAMPROJECT']
 organization='cooclass'
@@ -12,8 +10,8 @@ project=os.environ['SYSTEM_TEAMPROJECT']
 organization='cooclass'
 headers = {'Authorization': f'Bearer {token}'}
 
-def get_related_work_item():
-    build_url=f'https://dev.azure.com/{organization}/{project}/_apis/build/builds/{buildId}/workitems?api-version=7.0'
+def get_related_work_item(id):
+    build_url=f'https://dev.azure.com/{organization}/{project}/_apis/build/builds/{id}/workitems?api-version=7.0'
     response = requests.get(build_url, headers=headers)
     return response.json()
 
@@ -41,7 +39,7 @@ def update_item(id):
         print('Cant patch item: not a task or State not "Deploy to test"')
 
 
-output=get_related_work_item()
+output=get_related_work_item(buildId)
 count = output['count']
 if count > 0:
     for i in range(count):

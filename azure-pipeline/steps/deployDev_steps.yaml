@@ -2,7 +2,9 @@ steps:
   - download: current
     artifact: drop
 
-  - script: ls -R
+  - script: ls -Rla
+    workingDirectory: $(Pipeline.Workspace)
+
   - task: AzureRmWebAppDeployment@4
     inputs:
       ConnectionType: "AzureRM"
@@ -12,7 +14,7 @@ steps:
       deployToSlotOrASE: true
       ResourceGroupName: "test-rc"
       SlotName: "production"
-      packageForLinux: "$(Pipeline.Workspace)/drop/**.zip"
+      packageForLinux: "$(Pipeline.Workspace)/drop/*.zip"
       runtimeStack: "NODE|16-lts"
 
   # - task: AzureWebApp@1

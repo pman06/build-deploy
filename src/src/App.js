@@ -15,7 +15,7 @@ function App() {
         >
           Learn React
         </a>
-        Welcome again stil deploying to dev env
+        Exact RSP deploy copy
       </header>
     </div>
   );

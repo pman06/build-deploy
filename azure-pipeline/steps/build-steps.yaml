@@ -140,7 +140,7 @@ steps:
     inputs:
       SourceFolder: "$(System.DefaultWorkingDirectory)/src"
       Contents: "build/**/*"
-      TargetFolder: "$(Build.ArtifactStagingDirectory)/output/rsp"
+      TargetFolder: "$(Build.ArtifactStagingDirectory)/output"
       CleanTargetFolder: true
     displayName: "Copy files to artifact directory"
   # - task: ArchiveFiles@2

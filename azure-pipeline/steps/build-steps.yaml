@@ -153,7 +153,7 @@ steps:
   - task: ArchiveFiles@2
     displayName: "Archive files"
     inputs:
-      rootFolderOrFile: "$(Build.ArtifactStagingDirectory)/output/rsp"
+      rootFolderOrFile: "$(Build.ArtifactStagingDirectory)/output/"
       includeRootFolder: false
       archiveType: zip
       archiveFile: "$(Build.ArtifactStagingDirectory)/release/rsp-$(Build.BuildId).zip"

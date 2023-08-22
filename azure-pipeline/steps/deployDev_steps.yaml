@@ -10,12 +10,9 @@ steps:
       ConnectionType: "AzureRM"
       azureSubscription: "Azure subscription 1(3adc070f-9710-4754-8588-55bbc2ae1644)"
       appType: "webAppLinux"
-      WebAppName: "test-mywebapp-react"
-      deployToSlotOrASE: true
-      ResourceGroupName: "test-rc"
-      SlotName: "production"
-      packageForLinux: "$(Pipeline.Workspace)/drop/*.zip"
-      runtimeStack: "NODE|16-lts"
+      WebAppName: "test-webapp-functions"
+      packageForLinux: '"$(Pipeline.Workspace)/drop/*.zip"'
+      RuntimeStack: "NODE|16-lts"
 
   # - task: AzureWebApp@1
   #   inputs:

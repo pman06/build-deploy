@@ -15,7 +15,7 @@ function App() {
         >
           Learn React
         </a>
-        Exact RSP deploy copy
+        made changes now
       </header>
     </div>
   );

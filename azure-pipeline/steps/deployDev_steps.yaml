@@ -2,7 +2,7 @@ steps:
   - download: current
     artifact: drop
 
-  - script: ls -Rla
+  - script: pwd && ls -Rla
     workingDirectory: $(Pipeline.Workspace)
 
   - task: AzureRmWebAppDeployment@4
@@ -11,7 +11,7 @@ steps:
       azureSubscription: "Azure subscription 1(3adc070f-9710-4754-8588-55bbc2ae1644)"
       appType: "webAppLinux"
       WebAppName: "test-webapp-functions"
-      packageForLinux: '"$(Pipeline.Workspace)/drop/*.zip"'
+      packageForLinux: '"$(Pipeline.Workspace)/**/*.zip"'
       RuntimeStack: "NODE|16-lts"
 
   # - task: AzureWebApp@1

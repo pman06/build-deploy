@@ -16,7 +16,7 @@ steps:
 
   - task: Cache@2
     inputs:
-      key: '"npm" | "$(Agent.OS)" | src/package-lock.json'
+      key: '"npm" | "$(Agent.OS)" | package-lock.json'
       path: "$(nodeModules)"
       cacheHitVar: "cachehit"
     displayName: "cache node_modules"
@@ -29,7 +29,6 @@ steps:
 
   - script: |
       npm ci
-    workingDirectory: src
     displayName: "npm install"
     condition: ne(variables.cachehit, 'true')
 
@@ -64,10 +63,11 @@ steps:
       ls $(Agent.TempDirectory)/$(file)
       echo "ls secfile.securefilepath"
       ls $(secFile.secureFilePath)
-      cp $(Agent.TempDirectory)/$(file) ./src/
-      mv ./src/$(file) ./src/application.yaml
-      echo "ls /src"        
-      ls ./src/
+      cp $(Agent.TempDirectory)/$(file) .
+      ls ./
+      mv ./$(file) ./application.yaml
+      echo "ls "        
+      ls ./
     displayName: "Move config files"
 
   - task: SonarCloudPrepare@1
@@ -78,19 +78,29 @@ steps:
       configMode: "manual"
       cliProjectKey: "build-deploy"
       cliProjectName: "build-deploy"
-      cliSources: "./src"
+      cliSources: "$(System.DefaultWorkingDirectory)"
       extraProperties: |
-        sonar.flex.cobertura.reportPaths=$(System.DefaultWorkingDirectory)/src/coverage/cobertura-coverage.xml
+        sonar.flex.cobertura.reportPaths=$(System.DefaultWorkingDirectory)/coverage/cobertura-coverage.xml
         sonar.exclusions=**/node_modules/**,**/test/**
 
-  - script: npm run build
-    workingDirectory: src
-    displayName: "npm build"
-
+  - ${{ if eq(variables.isMaster, 'true') }}:
+      - script: |
+          echo "running Master"
+          npm run build
+        displayName: "npm build"
+  - ${{ elseif eq(variables.isUAT, 'true') }}:
+      - script: |
+          echo "running UAT"
+          npm run build
+        displayName: "npm build"
+  - ${{ else }}:
+      - script: |
+          echo "running else"
+          npm run build
+        displayName: "npm build"
   # Execute npm test with codecoverage
   - script: |
       CI=true npm run test -- --coverage --watchAll=false --ci --reporters=default --reporters=jest-junit --coverageReporters=cobertura
-    workingDirectory: src
     displayName: "Run test with codecoverage"
 
   - task: SonarCloudAnalyze@1
@@ -114,7 +124,7 @@ steps:
     condition: succeededOrFailed()
     inputs:
       testResultsFormat: "JUnit"
-      testResultsFiles: "src/junit.xml"
+      testResultsFiles: "junit.xml"
 
   #Provide coverage as outputs
   - task: PublishCodeCoverageResults@1
@@ -122,8 +132,8 @@ steps:
     displayName: "Publish code coverage"
     inputs:
       codeCoverageTool: Cobertura
-      summaryFileLocation: "$(System.DefaultWorkingDirectory)/src/coverage/cobertura-coverage.xml"
-      reportDirectory: "$(System.DefaultWorkingDirectory)/src/coverage"
+      summaryFileLocation: "$(System.DefaultWorkingDirectory)/coverage/cobertura-coverage.xml"
+      reportDirectory: "$(System.DefaultWorkingDirectory)/coverage"
       failIfCoverageEmpty: false
 
   - task: SonarCloudPublish@1
@@ -138,7 +148,7 @@ steps:
   #     CleanTargetFolder: true
   - task: CopyFiles@2
     inputs:
-      SourceFolder: "$(System.DefaultWorkingDirectory)/src"
+      SourceFolder: "$(System.DefaultWorkingDirectory)"
       Contents: "build/**/*"
       TargetFolder: "$(Build.ArtifactStagingDirectory)/output"
       CleanTargetFolder: true

@@ -146,13 +146,13 @@ steps:
   #     Contents: "build/**/*"
   #     TargetFolder: "$(Build.ArtifactStagingDirectory)/output"
   #     CleanTargetFolder: true
-  - task: CopyFiles@2
-    inputs:
-      SourceFolder: "$(System.DefaultWorkingDirectory)"
-      Contents: "build/**/*"
-      TargetFolder: "$(Build.ArtifactStagingDirectory)/output"
-      CleanTargetFolder: true
-    displayName: "Copy files to artifact directory"
+  # - task: CopyFiles@2
+  #   inputs:
+  #     SourceFolder: "$(System.DefaultWorkingDirectory)"
+  #     Contents: "build/**/*"
+  #     TargetFolder: "$(Build.ArtifactStagingDirectory)/output"
+  #     CleanTargetFolder: true
+  #   displayName: "Copy files to artifact directory"
   # - task: ArchiveFiles@2
   #   inputs:
   #     rootFolderOrFile: "$(Build.ArtifactStagingDirectory)/output"
@@ -163,10 +163,10 @@ steps:
   - task: ArchiveFiles@2
     displayName: "Archive files"
     inputs:
-      rootFolderOrFile: "$(Build.ArtifactStagingDirectory)/output/"
+      rootFolderOrFile: "$(System.DefaultWorkingDirectory)"
       includeRootFolder: false
       archiveType: zip
-      archiveFile: "$(Build.ArtifactStagingDirectory)/release/rsp-$(Build.BuildId).zip"
+      archiveFile: "$(Build.ArtifactStagingDirectory)/output/rsp-$(Build.BuildId).zip"
       replaceExistingArchive: true
   # - task: PublishBuildArtifacts@1
   #   inputs:
@@ -177,4 +177,4 @@ steps:
   - task: PublishPipelineArtifact@0
     displayName: "Publish server pipeline artifacts"
     inputs:
-      targetPath: "$(Build.ArtifactStagingDirectory)/release/"
+      targetPath: "$(Build.ArtifactStagingDirectory)/output/"

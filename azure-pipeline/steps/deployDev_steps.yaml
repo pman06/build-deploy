@@ -11,7 +11,7 @@ steps:
       azureSubscription: "Azure subscription 1(3adc070f-9710-4754-8588-55bbc2ae1644)"
       appType: "webAppLinux"
       WebAppName: "test-webapp-functions"
-      packageForLinux: "/home/vsts/work/1/drop/rsp-$(Build.BuildId).zip"
+      packageForLinux: "$(Pipeline.Workspace)/drop/rsp-$(Build.BuildId).zip"
       RuntimeStack: "NODE|16-lts"
 
   # - task: AzureWebApp@1
@@ -21,4 +21,4 @@ steps:
   #     appName: "test-mywebapp-react"
   #     package: "$(Pipeline.Workspace)/drop/*.zip"
   #     runtimeStack: "NODE|16-lts"
-  #     startUpCommand: "npm install -g serve && serve -s build"
+  #     startUpCommand: "pm2 serve /home/site/wwwroot/build --no-daemon --spa"

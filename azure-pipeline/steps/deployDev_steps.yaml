@@ -13,7 +13,7 @@ steps:
       WebAppName: "test-webapp-functions"
       packageForLinux: "$(Pipeline.Workspace)/drop/rsp-$(Build.BuildId).zip"
       RuntimeStack: "NODE|16-lts"
-
+      startUpCommand: "npm install -g serve && serve -s build"
   # - task: AzureWebApp@1
   #   inputs:
   #     azureSubscription: "Azure subscription 1(3adc070f-9710-4754-8588-55bbc2ae1644)"

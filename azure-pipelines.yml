@@ -11,13 +11,13 @@ trigger:
       - dev
       - uat
 
-schedules:
-  - cron: 0 21 * * *
-    displayName: Nightly Build
-    branches:
-      include:
-        - master
-    always: true
+# schedules:
+#   - cron: 0 21 * * *
+#     displayName: Nightly Build
+#     branches:
+#       include:
+#         - master
+#     always: true
 
 variables:
   - template: azure-pipeline/vars/variables.yaml

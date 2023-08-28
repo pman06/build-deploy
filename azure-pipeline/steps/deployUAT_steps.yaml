@@ -14,6 +14,7 @@ steps:
       appName: "test-mywebapp-react-uat"
       package: "$(Pipeline.Workspace)/drop/*.zip"
       runtimeStack: "NODE|16-lts"
+      startUpCommand: "npm install -g serve && serve -s build"
 
   - task: PythonScript@0
     condition: succeeded()

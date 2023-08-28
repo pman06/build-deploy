@@ -3,7 +3,6 @@ import requests
 import json
 
 project=os.environ['SYSTEM_TEAMPROJECT']
-organization='cooclass'
 buildId=os.environ['BUILD_BUILDID']
 token=os.environ['SYSTEM_ACCESSTOKEN']
 project=os.environ['SYSTEM_TEAMPROJECT']
@@ -24,7 +23,8 @@ def get_item(id):
 def update_item(id):
     response=get_item(id)
     url=f'https://dev.azure.com/{organization}/{project}/_apis/wit/workitems/{id}?api-version=7.0'
-    if (response['fields']["System.WorkItemType"] == 'Task') and (response['fields']['System.State']=='Deploy to test'):
+    #if (response['fields']["System.WorkItemType"] == 'Task') and (response['fields']['System.State']=='Deploy to test'):
+    if (response['fields']['System.State']=='Deploy to test'):
         data=[{
             'op': 'replace',
             'path': '/fields/System.State',
@@ -36,7 +36,7 @@ def update_item(id):
         print(response.text)
         return response.json()
     else:
-        print('Cant patch item: not a task or State not "Deploy to test"')
+        print('Cant patch item: State not "Deploy to test"')
 
 
 output=get_related_work_item(buildId)

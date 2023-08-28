@@ -1,8 +1,10 @@
 variables:
   - name: nodeModules
-    value: $(System.DefaultWorkingDirectory)/src/node_modules
+    value: $(System.DefaultWorkingDirectory)/node_modules
+  - name: scriptPath
+    value: $(System.DefaultWorkingDirectory)/azure-pipeline/scripts
   - name: fe-test
-    value: "$(Build.SourcesDirectory)/src"
+    value: "$(Build.SourcesDirectory)"
 
   - name: isMaster
     value: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/master') }}
@@ -20,7 +22,7 @@ variables:
   - name: file
     ${{ if eq(variables.isMaster, 'true') }}:
       value: "application.yml"
-    ${{ elseif eq(variables.isDev, 'true') }}:
+    ${{ elseif eq(variables.isUAT, 'true') }}:
       value: "application-dev-pp.yaml"
     ${{ else }}:
       value: "application-az-pp.yaml"

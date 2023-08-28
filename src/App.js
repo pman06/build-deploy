@@ -15,7 +15,7 @@ function App() {
         >
           Learn React
         </a>
-        Welcome again stil deploying to dev env
+        made changes now
       </header>
     </div>
   );

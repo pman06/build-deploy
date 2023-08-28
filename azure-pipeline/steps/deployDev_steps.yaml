@@ -1,11 +1,24 @@
 steps:
   - download: current
     artifact: drop
-  - task: AzureWebApp@1
+
+  - script: pwd && ls -Rla
+    workingDirectory: $(Pipeline.Workspace)
+
+  - task: AzureRmWebAppDeployment@4
     inputs:
+      ConnectionType: "AzureRM"
       azureSubscription: "Azure subscription 1(3adc070f-9710-4754-8588-55bbc2ae1644)"
       appType: "webAppLinux"
-      appName: "test-mywebapp-react"
-      package: "$(Pipeline.Workspace)/drop/*.zip"
-      runtimeStack: "NODE|16-lts"
+      WebAppName: "test-webapp-functions"
+      packageForLinux: "$(Pipeline.Workspace)/drop/*.zip"
+      RuntimeStack: "NODE|16-lts"
       startUpCommand: "npm install -g serve && serve -s build"
+  # - task: AzureWebApp@1
+  #   inputs:
+  #     azureSubscription: "Azure subscription 1(3adc070f-9710-4754-8588-55bbc2ae1644)"
+  #     appType: "webAppLinux"
+  #     appName: "test-mywebapp-react"
+  #     package: "$(Pipeline.Workspace)/drop/*.zip"
+  #     runtimeStack: "NODE|16-lts"
+  #     startUpCommand: "pm2 serve /home/site/wwwroot/build --no-daemon --spa"

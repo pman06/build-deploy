@@ -19,12 +19,14 @@ steps:
   - task: Cache@2
     inputs:
       key: '"npm" | "$(Agent.OS)" | package-lock.json'
+      restoreKeys: '"npm" | "$(Agent.OS)" | package-lock.json'
       path: "$(nodeModules)"
       cacheHitVar: "cachehit"
     displayName: "cache node_modules"
   - task: Cache@2
     inputs:
       key: '"python" | "$(Agent.OS)" | ./azure-pipeline/scripts/updateWI.py'
+      restoreKeys: '"python" | "$(Agent.OS)" | ./azure-pipeline/scripts/updateWI.py'
       path: "$(scriptPath)"
       cacheHitVar: "scriptcachehit"
     displayName: "cache script"

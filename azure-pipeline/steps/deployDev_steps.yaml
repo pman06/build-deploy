@@ -1,9 +1,13 @@
 steps:
+  - task: Cache@2
+    inputs:
+      key: '"python" | "$(Agent.OS)" | ./azure-pipeline/scripts/updateWI.py'
+      path: "$(scriptPath)"
+      cacheHitVar: "scriptcachehit"
+    displayName: "cache script"
+
   - download: current
     artifact: drop
-
-  - script: pwd && ls -Rla
-    workingDirectory: $(Pipeline.Workspace)
 
   - task: AzureRmWebAppDeployment@4
     inputs:
@@ -22,3 +26,11 @@ steps:
   #     package: "$(Pipeline.Workspace)/drop/*.zip"
   #     runtimeStack: "NODE|16-lts"
   #     startUpCommand: "pm2 serve /home/site/wwwroot/build --no-daemon --spa"
+
+  - task: PythonScript@0
+    condition: succeeded()
+    inputs:
+      scriptSource: "filePath"
+      scriptPath: "azure-pipeline/scripts/updateWI.py"
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)

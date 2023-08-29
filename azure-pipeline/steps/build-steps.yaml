@@ -177,7 +177,7 @@ steps:
       targetPath: "$(Build.ArtifactStagingDirectory)/release/"
 
   - task: PythonScript@0
-    condition: succeeded()
+    condition: eq(variables['Build.Reason'], 'PullRequest')
     inputs:
       scriptSource: "filePath"
       scriptPath: "azure-pipeline/scripts/updateWI.py"

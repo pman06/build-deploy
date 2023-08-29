@@ -41,7 +41,7 @@ def update_item(id):
     if (item_type == 'Task' or item_type == 'Bug'):
         state=response['fields']['System.State']
         assigned_to=response['fields']['System.AssignedTo']['displayName']
-        print('assigned to:', assigned_to, ', Requester:', requester)
+        print('assigned to:', assigned_to, ', Requester:', requester, ', State:', state)
         if  (state=='Deploy to test') and (requester==assigned_to) and (sourcebranch=='refs/heads/uat'):
             value='Ready to Test'
             response=patch_item(url,value)
@@ -55,7 +55,6 @@ def update_item(id):
             response=patch_item(url,value)
             return response
         else:
-            print("Status: ",state)
             print('Cant patch item: State not "Deploy to test"/"Code review"/"In Progress"')
     else:
         print('Cant patch item: Not a "Task" or "Bug"')

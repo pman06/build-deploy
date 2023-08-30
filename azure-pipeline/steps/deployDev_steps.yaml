@@ -2,12 +2,16 @@ steps:
   - task: Cache@2
     inputs:
       key: '"python" | "$(Agent.OS)" | ./azure-pipeline/scripts/updateWI.py'
+      restoreKeys: '"python" | "$(Agent.OS)" | ./azure-pipeline/scripts/updateWI.py'
       path: "$(scriptPath)"
       cacheHitVar: "scriptcachehit"
     displayName: "cache script"
 
   - download: current
     artifact: drop
+
+  - download: current
+    artifact: "update_script"
 
   - task: AzureRmWebAppDeployment@4
     inputs:
@@ -31,6 +35,6 @@ steps:
     condition: succeeded()
     inputs:
       scriptSource: "filePath"
-      scriptPath: "azure-pipeline/scripts/updateWI.py"
+      scriptPath: "$(Pipeline.Workspace)/**/updateWI.py"
     env:
       SYSTEM_ACCESSTOKEN: $(System.AccessToken)

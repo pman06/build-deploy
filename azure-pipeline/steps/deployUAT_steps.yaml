@@ -1,11 +1,4 @@
 steps:
-  - task: Cache@2
-    inputs:
-      key: '"python" | "$(Agent.OS)" | ./azure-pipeline/scripts/updateWI.py'
-      restoreKeys: '"python" | "$(Agent.OS)" | ./azure-pipeline/scripts/updateWI.py'
-      path: "$(scriptPath)"
-      cacheHitVar: "scriptcachehit"
-    displayName: "cache script"
   - download: current
     artifact: drop
   - download: current

@@ -16,6 +16,6 @@ steps:
     condition: succeeded()
     inputs:
       scriptSource: "filePath"
-      scriptPath: "$(Pipeline.Workspace)/**/updateWI.py"
+      scriptPath: "$(Pipeline.Workspace)/update_script/updateWI.py"
     env:
       SYSTEM_ACCESSTOKEN: $(System.AccessToken)

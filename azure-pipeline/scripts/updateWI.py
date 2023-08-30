@@ -9,7 +9,8 @@ token=os.environ['SYSTEM_ACCESSTOKEN']
 project=os.environ['SYSTEM_TEAMPROJECT']
 requester=os.environ['BUILD_REQUESTEDFOR']
 sourcebranch=os.environ['BUILD_SOURCEBRANCH']
-organization='cooclass'
+#organization='cooclass'
+organization=os.environ['SYSTEM_COLLECTIONURI'].split('/')[3]
 headers = {'Authorization': f'Bearer {token}'}
 
 def get_related_work_item(id):
@@ -42,7 +43,7 @@ def update_item(id):
         state=response['fields']['System.State']
         assigned_to=response['fields']['System.AssignedTo']['displayName']
         print('assigned to:', assigned_to, ', Requester:', requester, ', State:', state)
-        if  (state=='Deploy to test') and (requester==assigned_to) and (sourcebranch=='refs/heads/uat'):
+        if  (state=='Deploy to Test') and (requester==assigned_to) and (sourcebranch=='refs/heads/uat'):
             value='Ready to Test'
             response=patch_item(url,value)
             return response

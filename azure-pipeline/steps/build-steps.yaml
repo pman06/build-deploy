@@ -23,13 +23,6 @@ steps:
       path: "$(nodeModules)"
       cacheHitVar: "cachehit"
     displayName: "cache node_modules"
-  - task: Cache@2
-    inputs:
-      key: '"python" | "$(Agent.OS)" | ./azure-pipeline/scripts/updateWI.py'
-      restoreKeys: '"python" | "$(Agent.OS)" | ./azure-pipeline/scripts/updateWI.py'
-      path: "$(scriptPath)"
-      cacheHitVar: "scriptcachehit"
-    displayName: "cache script"
 
   - script: |
       npm ci
@@ -185,3 +178,9 @@ steps:
       scriptPath: "azure-pipeline/scripts/updateWI.py"
     env:
       SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+  - task: PublishPipelineArtifact@1
+    condition: in(variables['Build.SourceBranch'], 'refs/heads/dev', 'refs/heads/uat', 'refs/heads/master')
+    inputs:
+      targetPath: "$(System.DefaultWorkingDirectory)/azure-pipeline/scripts/updateWI.py"
+      artifact: "update_script"
+      publishLocation: "pipeline"

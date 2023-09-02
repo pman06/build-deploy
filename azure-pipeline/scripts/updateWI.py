@@ -9,7 +9,6 @@ token=os.environ['SYSTEM_ACCESSTOKEN']
 project=os.environ['SYSTEM_TEAMPROJECT']
 requester=os.environ['BUILD_REQUESTEDFOR']
 sourcebranch=os.environ['BUILD_SOURCEBRANCH']
-#organization='cooclass'
 organization=os.environ['SYSTEM_COLLECTIONURI'].split('/')[3]
 headers = {'Authorization': f'Bearer {token}'}
 
@@ -19,10 +18,11 @@ def get_related_work_item(id):
     return response.json()
 
 def get_item(id):   
-    url=f'https://dev.azure.com/{organization}/{project}/_apis/wit/workitems/{id}?api-version=7.0'
+    url=f'https://dev.azure.com/{organization}/_apis/wit/workitems/{id}'
     response=requests.get(url, headers=headers)
     print('getitem():',response.json())
     return response.json()
+
 def patch_item(url, value):
     data=[{
         'op': 'replace',
@@ -36,9 +36,9 @@ def patch_item(url, value):
 def update_item(id):
     response=get_item(id)
     item_type=response['fields']["System.WorkItemType"]
-    print('Work item type', item_type)
+    project=response['fields']['System.TeamProject']
     url=f'https://dev.azure.com/{organization}/{project}/_apis/wit/workitems/{id}?api-version=7.0'
-    #if (response['fields']["System.WorkItemType"] == 'Task') and (response['fields']['System.State']=='Deploy to test'):
+    print('Work item type:', item_type, ", Project:", project, ", url: ", url)
     if (item_type == 'Task' or item_type == 'Bug'):
         state=response['fields']['System.State']
         assigned_to=response['fields']['System.AssignedTo']['displayName']

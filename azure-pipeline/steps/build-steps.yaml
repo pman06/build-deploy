@@ -3,6 +3,7 @@ steps:
     inputs:
       versionSpec: "16.x"
     displayName: "Install Node.js"
+
   - script: |
       echo value: ${{ eq(variables['isDev'], 'true') }}
       echo $(isNightly)
@@ -18,15 +19,10 @@ steps:
   - task: Cache@2
     inputs:
       key: '"npm" | "$(Agent.OS)" | package-lock.json'
+      restoreKeys: '"npm" | "$(Agent.OS)" | package-lock.json'
       path: "$(nodeModules)"
       cacheHitVar: "cachehit"
     displayName: "cache node_modules"
-  - task: Cache@2
-    inputs:
-      key: '"python" | "$(Agent.OS)" | "$(scriptPath)"'
-      path: "$(scriptPath)"
-      cacheHitVar: "scriptcachehit"
-    displayName: "cache script"
 
   - script: |
       npm ci
@@ -67,22 +63,22 @@ steps:
       cp $(Agent.TempDirectory)/$(file) .
       ls ./
       mv ./$(file) ./application.yaml
-      echo "ls "        
+      echo "ls "
       ls ./
     displayName: "Move config files"
 
-  - task: SonarCloudPrepare@1
-    inputs:
-      SonarCloud: "SONAR_TOKEN_TO_ADO"
-      organization: "cooclass"
-      scannerMode: "CLI"
-      configMode: "manual"
-      cliProjectKey: "build-deploy"
-      cliProjectName: "build-deploy"
-      cliSources: "$(System.DefaultWorkingDirectory)"
-      extraProperties: |
-        sonar.flex.cobertura.reportPaths=$(System.DefaultWorkingDirectory)/coverage/cobertura-coverage.xml
-        sonar.exclusions=**/node_modules/**,**/test/**
+  # - task: SonarCloudPrepare@1
+  #   inputs:
+  #     SonarCloud: "SONAR_TOKEN_TO_ADO"
+  #     organization: "cooclass"
+  #     scannerMode: "CLI"
+  #     configMode: "manual"
+  #     cliProjectKey: "build-deploy"
+  #     cliProjectName: "build-deploy"
+  #     cliSources: "$(System.DefaultWorkingDirectory)"
+  #     extraProperties: |
+  #       sonar.flex.cobertura.reportPaths=$(System.DefaultWorkingDirectory)/coverage/cobertura-coverage.xml
+  #       sonar.exclusions=**/node_modules/**,**/test/**
 
   - ${{ if eq(variables.isMaster, 'true') }}:
       - script: |
@@ -104,9 +100,9 @@ steps:
       CI=true npm run test -- --coverage --watchAll=false --ci --reporters=default --reporters=jest-junit --coverageReporters=cobertura
     displayName: "Run test with codecoverage"
 
-  - task: SonarCloudAnalyze@1
-    inputs:
-      jdkversion: "JAVA_HOME_11_X64"
+  # - task: SonarCloudAnalyze@1
+  #   inputs:
+  #     jdkversion: "JAVA_HOME_11_X64"
 
   # - task: SnykSecurityScan@1
   #   inputs:
@@ -137,10 +133,10 @@ steps:
       reportDirectory: "$(System.DefaultWorkingDirectory)/coverage"
       failIfCoverageEmpty: false
 
-  - task: SonarCloudPublish@1
-    condition: succeededOrFailed()
-    inputs:
-      pollingTimeoutSec: "300"
+  # - task: SonarCloudPublish@1
+  #   condition: succeededOrFailed()
+  #   inputs:
+  #     pollingTimeoutSec: "300"
 
   - task: CopyFiles@2
     inputs:
@@ -174,3 +170,18 @@ steps:
     displayName: "Publish server pipeline artifacts"
     inputs:
       targetPath: "$(Build.ArtifactStagingDirectory)/release/"
+
+  - task: PythonScript@0
+    condition: eq(variables['Build.Reason'], 'PullRequest')
+    inputs:
+      scriptSource: "filePath"
+      scriptPath: "azure-pipeline/scripts/updateWI.py"
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
+  - task: PublishPipelineArtifact@1
+    condition: in(variables['Build.SourceBranch'], 'refs/heads/dev', 'refs/heads/uat', 'refs/heads/master')
+    inputs:
+      targetPath: "$(System.DefaultWorkingDirectory)/azure-pipeline/scripts/updateWI.py"
+      artifact: "update_script"
+      publishLocation: "pipeline"

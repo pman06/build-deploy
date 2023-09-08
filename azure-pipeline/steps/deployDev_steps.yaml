@@ -2,8 +2,10 @@ steps:
   - download: current
     artifact: drop
 
-  - script: pwd && ls -Rla
-    workingDirectory: $(Pipeline.Workspace)
+  - download: current
+    artifact: "update_script"
+  - script: ls -Ra $(Pipeline.Workspace)
+    displayName: "Print pipeline folders"
 
   - task: AzureRmWebAppDeployment@4
     inputs:
@@ -22,3 +24,11 @@ steps:
   #     package: "$(Pipeline.Workspace)/drop/*.zip"
   #     runtimeStack: "NODE|16-lts"
   #     startUpCommand: "pm2 serve /home/site/wwwroot/build --no-daemon --spa"
+
+  - task: PythonScript@0
+    condition: succeeded()
+    inputs:
+      scriptSource: "filePath"
+      scriptPath: "$(Pipeline.Workspace)/update_script/updateWI.py"
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)

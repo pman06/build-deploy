@@ -20,6 +20,7 @@ def get_related_work_item(id):
 def get_item(id):   
     url=f'https://dev.azure.com/{organization}/_apis/wit/workitems/{id}'
     response=requests.get(url, headers=headers)
+    
     print('getitem():',response.json())
     return response.json()
 

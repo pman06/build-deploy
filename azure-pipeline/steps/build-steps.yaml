@@ -6,6 +6,7 @@ steps:
 
   - script: |
       echo value: ${{ eq(variables['isDev'], 'true') }}
+      echo value of buildName: $(buildName)
       echo $(isNightly)
       echo $(isMaster)
       echo $(isDev)

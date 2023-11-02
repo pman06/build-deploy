@@ -9,7 +9,7 @@ steps:
 
   - bash: |
       cdt=$(date +"%d_%m_%Y_%H_%M_%S")
-      folder=$(Build.Repository.Name)-$cdt
+      folder=$(Build.Repository.Name)-$(cdt)
       newversion=$(date +"%Y%m%d.%-H%M%S.0")
       echo "##vso[task.setvariable variable=startdate]$cdt"
       echo "##vso[task.setvariable variable=newversion]$newversion"

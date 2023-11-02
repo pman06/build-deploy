@@ -5,7 +5,8 @@ variables:
     value: $(System.DefaultWorkingDirectory)/azure-pipeline/scripts
   - name: fe-test
     value: "$(Build.SourcesDirectory)"
-
+  - name: artifactCollectionName
+    value: "drop"
   - name: isMaster
     value: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/master') }}
   - name: isDev

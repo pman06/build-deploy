@@ -1,0 +1,88 @@
+steps:
+  - task: DownloadBuildArtifacts@0
+    inputs:
+      buildType: "current"
+      downloadType: "single"
+      artifactName: "$(artifactCollectionName)"
+      itemPattern: "$(artifactCollectionName)/**"
+      downloadPath: "$(System.ArtifactsDirectory)"
+
+  - bash: |
+      cdt=$(date +"%d_%m_%Y_%H_%M_%S")
+      folder=$(Build.Repository.Name)-$cdt
+      newversion=$(date +"%Y%m%d.%-H%M%S.0")
+      echo "##vso[task.setvariable variable=startdate]$cdt"
+      echo "##vso[task.setvariable variable=newversion]$newversion"
+      echo "##vso[task.setvariable variable=folder]$folder"
+    displayName: Set current date time variables
+
+  - bash: |
+      echo startdate= $(startdate)
+      echo folder= $(folder)
+      echo newversion=$(newversion)
+      pwd 
+      ls -Ra
+
+  #Copy the .jar file to a new folder with current datetime
+  - task: CopyFiles@2
+    displayName: "Copy jar file to new location"
+    inputs:
+      SourceFolder: "$(System.ArtifactsDirectory)"
+      Contents: "$(System.ArtifactsDirectory)/$(artifactCollectionName)/**"
+      TargetFolder: "$(System.ArtifactsDirectory)/$(folder)"
+      CleanTargetFolder: true
+      flattenFolders: true
+
+  # - task: Bash@3
+  #   inputs:
+  #     workingDirectory: "$(System.ArtifactsDirectory)/$(folder)"
+  #     targetType: "inline"
+  #     script: |
+  #       filename=$(find . -maxdepth 1 -name "*.jar")
+  #       pre=${filename%.*}
+  #       ext=${filename##*.}
+  #       nf=$pre-$startdate.$ext
+  #       mv $filename $nf
+  #       ls -a
+  #       echo "##vso[task.setvariable variable=newfile]$nf"
+  #   env:
+  #     startdate: $(startdate)
+
+  - task: ArchiveFiles@2
+    inputs:
+      rootFolderOrFile: "$(System.ArtifactsDirectory)/$(folder)"
+      includeRootFolder: false
+      archiveType: "zip"
+      archiveFile: "$(System.ArtifactsDirectory)/$(folder)/$(artifactCollectionName).zip"
+      replaceExistingArchive: true
+
+  # - task: Bash@3
+  #   inputs:
+  #     workingDirectory: "$(System.ArtifactsDirectory)/$(folder)"
+  #     targetType: "inline"
+  #     script: |
+  #       filename=$(find . -maxdepth 1 -name "*.jar")
+  #       echo filename=$filename
+  #       ls -a
+  #       rm $filename
+  #       echo after
+  #       ls -a
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: "$(System.ArtifactsDirectory)/$(folder)"
+      ArtifactName: "$(folder)"
+      publishLocation: "Container"
+
+  - task: UniversalPackages@0
+    inputs:
+      command: "publish"
+      publishDirectory: "$(System.ArtifactsDirectory)/$(folder)"
+      feedsToUsePublish: "internal"
+      vstsFeedPublish: "72b7f89c-11b3-4fb1-9964-dde1a6df41e0"
+      vstsFeedPackagePublish: "$(Build.Repository.Name)"
+      versionOption: "custom"
+      versionPublish: "$(newversion)"
+      publishedPackageVar: "mewappvar"
+
+  - bash: echo $(mewappvar)

@@ -6,6 +6,7 @@ steps:
 
   - script: |
       echo value: ${{ eq(variables['isDev'], 'true') }}
+      echo value of buildName: $(buildName)
       echo $(isNightly)
       echo $(isMaster)
       echo $(isDev)
@@ -145,6 +146,8 @@ steps:
       TargetFolder: "$(Build.ArtifactStagingDirectory)/output"
       CleanTargetFolder: true
     displayName: "Copy files to artifact directory"
+
+  - bash: ls $(Build.ArtifactStagingDirectory)/output/
   - task: ArchiveFiles@2
     inputs:
       rootFolderOrFile: "$(Build.ArtifactStagingDirectory)/output"
@@ -152,14 +155,7 @@ steps:
       archiveType: "zip"
       archiveFile: "$(Build.ArtifactStagingDirectory)/release/$(Build.BuildId).zip"
       replaceExistingArchive: true
-  # - task: ArchiveFiles@2
-  #   displayName: "Archive files"
-  #   inputs:
-  #     rootFolderOrFile: "$(System.DefaultWorkingDirectory)"
-  #     includeRootFolder: false
-  #     archiveType: zip
-  #     archiveFile: "$(Build.ArtifactStagingDirectory)/output/rsp-$(Build.BuildId).zip"
-  #     replaceExistingArchive: true
+
   # - task: PublishBuildArtifacts@1
   #   inputs:
   #     PathtoPublish: "$(Build.ArtifactStagingDirectory)/release"

@@ -1,64 +1,71 @@
 steps:
-  - task: DownloadBuildArtifacts@0
+  - task: DownloadPipelineArtifact@2
     inputs:
       buildType: "current"
-      downloadType: "single"
+      # downloadType: "single"
       artifactName: "$(artifactCollectionName)"
-      itemPattern: "$(artifactCollectionName)/**"
-      downloadPath: "$(System.ArtifactsDirectory)"
+      # itemPattern: "$(artifactCollectionName)/**"
+      # downloadPath: "$(Pipeline.Workspace)"
+
+  - download: current
+    artifact: drop
 
   - bash: |
-      cdt=$(date +"%d_%m_%Y_%H_%M_%S")
-      folder=$(Build.Repository.Name)-$cdt
+      cdate=$(date +"%d_%m_%Y_%H_%M_%S")
+      folder="$(Build.Repository.Name)-$cdate"
       newversion=$(date +"%Y%m%d.%-H%M%S.0")
-      echo "##vso[task.setvariable variable=startdate]$cdt"
+      feed=$(echo $(Build.Repository.Name) | tr -d " ")
+      echo "##vso[task.setvariable variable=startdate]$cdate"
       echo "##vso[task.setvariable variable=newversion]$newversion"
       echo "##vso[task.setvariable variable=folder]$folder"
+      echo "##vso[task.setvariable variable=feed]$feed"
     displayName: Set current date time variables
 
   - bash: |
       echo startdate= $(startdate)
       echo folder= $(folder)
       echo newversion=$(newversion)
+      echo $(Build.Repository.Name)
       pwd 
-      ls -Ra
+      ls -Ra $(Pipeline.Workspace)
 
   #Copy the .jar file to a new folder with current datetime
   - task: CopyFiles@2
-    displayName: "Copy jar file to new location"
+    displayName: "Copy Artifact file to new location"
     inputs:
-      SourceFolder: "$(System.ArtifactsDirectory)"
-      Contents: "$(System.ArtifactsDirectory)/$(artifactCollectionName)/**"
-      TargetFolder: "$(System.ArtifactsDirectory)/$(folder)"
+      SourceFolder: "$(Pipeline.Workspace)" #"$(Pipeline.Workspace)
+      Contents: "$(Pipeline.Workspace)/$(artifactCollectionName)/**"
+      TargetFolder: "$(Pipeline.Workspace)/$(folder)"
       CleanTargetFolder: true
       flattenFolders: true
 
-  # - task: Bash@3
-  #   inputs:
-  #     workingDirectory: "$(System.ArtifactsDirectory)/$(folder)"
-  #     targetType: "inline"
-  #     script: |
-  #       filename=$(find . -maxdepth 1 -name "*.jar")
-  #       pre=${filename%.*}
-  #       ext=${filename##*.}
-  #       nf=$pre-$startdate.$ext
-  #       mv $filename $nf
-  #       ls -a
-  #       echo "##vso[task.setvariable variable=newfile]$nf"
-  #   env:
-  #     startdate: $(startdate)
-
-  - task: ArchiveFiles@2
+  - task: Bash@3
     inputs:
-      rootFolderOrFile: "$(System.ArtifactsDirectory)/$(folder)"
-      includeRootFolder: false
-      archiveType: "zip"
-      archiveFile: "$(System.ArtifactsDirectory)/$(folder)/$(artifactCollectionName).zip"
-      replaceExistingArchive: true
+      workingDirectory: "$(Pipeline.Workspace)/$(folder)"
+      targetType: "inline"
+      script: |
+        ls -a
+        filename=$(find . -maxdepth 1 -name "*.zip")
+        pre=${filename%.*}
+        ext=${filename##*.}
+        nf=$pre-$startdate.$ext
+        mv $filename $nf
+        ls -a
+        echo "##vso[task.setvariable variable=newfile]$nf"
+    env:
+      startdate: $(startdate)
+
+  # - task: ArchiveFiles@2
+  #   inputs:
+  #     rootFolderOrFile: "$(Pipeline.Workspace)/$(folder)"
+  #     includeRootFolder: false
+  #     archiveType: "zip"
+  #     archiveFile: "$(Pipeline.Workspace)/$(folder)/$(newfile).zip"
+  #     replaceExistingArchive: true
 
   # - task: Bash@3
   #   inputs:
-  #     workingDirectory: "$(System.ArtifactsDirectory)/$(folder)"
+  #     workingDirectory: "$(Pipeline.Workspace)/$(folder)"
   #     targetType: "inline"
   #     script: |
   #       filename=$(find . -maxdepth 1 -name "*.jar")
@@ -70,17 +77,17 @@ steps:
 
   - task: PublishBuildArtifacts@1
     inputs:
-      PathtoPublish: "$(System.ArtifactsDirectory)/$(folder)"
+      PathtoPublish: "$(Pipeline.Workspace)/$(folder)"
       ArtifactName: "$(folder)"
       publishLocation: "Container"
 
   - task: UniversalPackages@0
     inputs:
       command: "publish"
-      publishDirectory: "$(System.ArtifactsDirectory)/$(folder)"
+      publishDirectory: "$(Pipeline.Workspace)/$(folder)"
       feedsToUsePublish: "internal"
       vstsFeedPublish: "72b7f89c-11b3-4fb1-9964-dde1a6df41e0"
-      vstsFeedPackagePublish: "$(Build.Repository.Name)"
+      vstsFeedPackagePublish: "$(feed)"
       versionOption: "custom"
       versionPublish: "$(newversion)"
       publishedPackageVar: "mewappvar"

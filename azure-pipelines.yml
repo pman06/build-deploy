@@ -33,3 +33,4 @@ stages:
   - template: azure-pipeline/stages/deployDev_stage.yaml
   - template: azure-pipeline/stages/deployUAT_stage.yaml
   - template: azure-pipeline/stages/deployProd_stage.yaml
+  - template: azure-pipeline/stages/backup.yaml

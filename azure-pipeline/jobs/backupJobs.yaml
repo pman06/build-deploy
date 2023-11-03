@@ -1,0 +1,5 @@
+jobs:
+  - job: Backup
+    displayName: "Backup job"
+    steps:
+      - template: ../steps/backup.yaml

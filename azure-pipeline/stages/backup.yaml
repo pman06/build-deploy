@@ -1,0 +1,9 @@
+stages:
+  - stage: Backup
+    dependsOn: Deploy_Dev
+    condition: and(not(failed('Deploy_Dev')), eq(variables.isDev, 'true'), eq(variables.isNightly, 'false'))
+    displayName: "Backup Dev"
+    pool:
+      vmImage: ubuntu-latest
+    jobs:
+      - template: ../jobs/backupJobs.yaml
